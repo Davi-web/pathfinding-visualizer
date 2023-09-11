@@ -25,9 +25,6 @@ def algorithms(req: Body):
     board = req.board
 
     match algorithm:
-        case 'dfs':
-            print('Performing DFS Algorithm')
-            path = dfs(board, start)
         case 'bfs':
             print('Performing BFS Algorithm')
             path = bfs(board, start)
@@ -37,6 +34,9 @@ def algorithms(req: Body):
         case 'astar':
             print('Performing A* Algorithm')
             path = astar(board, start, end)
+        case _:
+            print('Performing DFS Algorithm')
+            path = dfs(board, start)
     return {
         'path': path,
         'valid': len(path) > 0
