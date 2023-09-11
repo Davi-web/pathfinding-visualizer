@@ -221,7 +221,9 @@ export default function Home() {
           setStart([row, col]);
           return newBoard;
         });
-        node.classList.add('bg-red-500');
+        if (!node.classList.contains('bg-black')) {
+          node.classList.add('bg-red-500');
+        }
         break;
       case OnClickState.END:
         setBoard((prev) => {
@@ -232,7 +234,9 @@ export default function Home() {
           setEnd([row, col]);
           return newBoard;
         });
-        node.classList.add('bg-blue-500');
+        if (!node.classList.contains('bg-black')) {
+          node.classList.add('bg-blue-500');
+        }
         break;
     }
   };
