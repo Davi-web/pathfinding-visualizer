@@ -14,30 +14,30 @@ class Body(BaseModel):
     end: List[int]
 
 
-@app.get("/api/python")
+@app.get('/api/python')
 def hello_world():
-    return {"message": "Hello World"}
+    return {'message': 'Hello World'}
 
 
-@app.post("/api/algorithms")
+@app.post('/api/algorithms')
 def algorithms(req: Body):
     start, end, algorithm = req.start, req.end, req.algorithm
     board = req.board
 
     match algorithm:
-        case "dfs":
-            print("Performing DFS Algorithm")
+        case 'dfs':
+            print('Performing DFS Algorithm')
             path = dfs(board, start)
-        case "bfs":
-            print("Performing BFS Algorithm")
+        case 'bfs':
+            print('Performing BFS Algorithm')
             path = bfs(board, start)
-        case "dijkstra":
-            print("Perfroming Dijkstra's Algorithm")
+        case 'dijkstra':
+            print('Perfroming Dijkstra Algorithm')
             path = dijkstra(board, start, end)
-        case "astar":
-            print("Performing A* Algorithm")
+        case 'astar':
+            print('Performing A* Algorithm')
             path = astar(board, start, end)
     return {
-        "path": path,
-        "valid": len(path) > 0
+        'path': path,
+        'valid': len(path) > 0
     }
