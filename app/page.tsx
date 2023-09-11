@@ -243,7 +243,7 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 justify-items-center gap-2 ">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center gap-2 ">
               <Button
                 variant="default"
                 size="sm"
@@ -254,78 +254,6 @@ export default function Home() {
               >
                 Change Start Location
               </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleState(OnClickState.WALL)}
-                className={cn(
-                  onClickState === OnClickState.WALL && ' text-slate-100'
-                )}
-              >
-                Add Walls
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleState(OnClickState.END)}
-                className={cn(
-                  onClickState === OnClickState.END && ' text-slate-100'
-                )}
-              >
-                Change End Location
-              </Button>
-
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="default">Algorithms</Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="grid gap-4">
-                    <div className="grid gap-2">
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="bfsCheck">BFS</Label>
-                        <Input
-                          id="bfsCheck"
-                          name="algorithm"
-                          type="radio"
-                          className="col-span-2 h-8"
-                          onClick={() => setAlgorithm('bfs')}
-                        />
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="dfsCheck">DFS</Label>
-                        <Input
-                          id="dfsCheck"
-                          name="algorithm"
-                          type="radio"
-                          onClick={() => setAlgorithm('dfs')}
-                          className="col-span-2 h-8"
-                        />
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="dijkstra">Dijkstra</Label>
-                        <Input
-                          id="dijkstra"
-                          name="algorithm"
-                          onClick={() => setAlgorithm('dijkstra')}
-                          type="radio"
-                          className="col-span-2 h-8"
-                        />
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="astarButton">A*</Label>
-                        <Input
-                          id="astarButton"
-                          name="algorithm"
-                          onClick={() => setAlgorithm('astar')}
-                          type="radio"
-                          className="col-span-2 h-8"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="default">Dimensions</Button>
@@ -402,6 +330,84 @@ export default function Home() {
                   </div>
                 </PopoverContent>
               </Popover>
+
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleState(OnClickState.END)}
+                className={cn(
+                  onClickState === OnClickState.END && ' text-slate-100'
+                )}
+              >
+                Change End Location
+              </Button>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="default">Algorithms</Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="grid gap-4">
+                    <div className="grid gap-2">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="bfsCheck">BFS</Label>
+                        <Input
+                          id="bfsCheck"
+                          name="algorithm"
+                          type="radio"
+                          className="col-span-2 h-8"
+                          checked={algorithm === 'bfs'}
+                          onChange={() => setAlgorithm('bfs')}
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="dfsCheck">DFS</Label>
+                        <Input
+                          id="dfsCheck"
+                          name="algorithm"
+                          type="radio"
+                          value={algorithm}
+                          onChange={() => setAlgorithm('dfs')}
+                          checked={algorithm === 'dfs'}
+                          className="col-span-2 h-8"
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="dijkstra">Dijkstra</Label>
+                        <Input
+                          id="dijkstra"
+                          name="algorithm"
+                          onChange={() => setAlgorithm('dijkstra')}
+                          checked={algorithm === 'dijkstra'}
+                          type="radio"
+                          className="col-span-2 h-8"
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="astarButton">A*</Label>
+                        <Input
+                          id="astarButton"
+                          name="algorithm"
+                          onChange={() => setAlgorithm('astar')}
+                          checked={algorithm === 'astar'}
+                          type="radio"
+                          className="col-span-2 h-8"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleState(OnClickState.WALL)}
+                className={cn(
+                  onClickState === OnClickState.WALL && ' text-slate-100'
+                )}
+              >
+                Add Walls
+              </Button>
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
@@ -409,39 +415,38 @@ export default function Home() {
           </CardFooter>
         </Card>
       </div>
-      <div className="flex flex-col">
-        {board.map((row, i) => {
-          return (
-            <div className="flex justify-center" key={i}>
-              {row.map((col, j) => {
-                let bgColor = 'bg-green-200';
-                if (col === BOARDSTATE.START) {
-                  bgColor = 'bg-red-200';
-                }
-                if (col === BOARDSTATE.END) {
-                  bgColor = 'bg-blue-500';
-                }
-                if (col === BOARDSTATE.WALL) {
-                  bgColor = 'bg-black';
-                }
-                return (
-                  <div
-                    key={'node-' + i + '-' + j}
-                    id={'node-' + i + '-' + j}
-                    className={cn(
-                      'h-4 w-4 border-[1px] border-red-300',
-                      bgColor
-                    )}
-                    onClick={() => handleClick(i, j)}
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}
-                    onMouseMove={(e) => handleMouseMove(e)}
-                  />
-                );
-              })}
-            </div>
-          );
-        })}
+      <div className="flex mt-4 justify-center" id="board">
+        <div className=" rounded-lg flex flex-col justify-center w-96 h-96 bg-red-300">
+          {board.map((row, i) => {
+            return (
+              <div className="flex justify-center" key={i}>
+                {row.map((col, j) => {
+                  let bgColor = 'bg-green-200';
+                  if (col === BOARDSTATE.START) {
+                    bgColor = 'bg-red-200';
+                  }
+                  if (col === BOARDSTATE.END) {
+                    bgColor = 'bg-blue-500';
+                  }
+                  if (col === BOARDSTATE.WALL) {
+                    bgColor = 'bg-black';
+                  }
+                  return (
+                    <div
+                      key={'node-' + i + '-' + j}
+                      id={'node-' + i + '-' + j}
+                      className={cn('h-4 w-4', bgColor)}
+                      onClick={() => handleClick(i, j)}
+                      onMouseDown={handleMouseDown}
+                      onMouseUp={handleMouseUp}
+                      onMouseMove={(e) => handleMouseMove(e)}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </main>
   );
