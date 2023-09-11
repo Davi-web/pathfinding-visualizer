@@ -78,6 +78,7 @@ export default function Home() {
   const [end, setEnd] = useState([size[0] - 2, size[1] - 2]);
   const [algorithm, setAlgorithm] = useState('dfs');
   const [valid, setValid] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   const [path, setPath] = useState([]);
   const generateBoard = (m: number, n: number) => {
@@ -104,10 +105,12 @@ export default function Home() {
 
   enum OnClickState {
     START = 'START',
-    WALL = 'WALL',
+    REMOVE_WALL = 'REMOVE_WALL',
+    ADD_WALL = 'ADD_WALL',
     END = 'END',
     NULL = 'NULL',
   }
+
   enum BOARDSTATE {
     EMPTY = 0,
     WALL = 1,
@@ -115,41 +118,6 @@ export default function Home() {
     END = 3,
   }
   const [onClickState, setOnClickState] = useState<OnClickState>();
-  const handleClick = (row: number, col: number) => {
-    switch (onClickState) {
-      case OnClickState.START:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (newBoard[row][col] !== 0) return newBoard;
-          newBoard[row][col] = 2;
-          newBoard[start[0]][start[1]] = 0;
-          setStart([row, col]);
-          return newBoard;
-        });
-        break;
-      case OnClickState.WALL:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (newBoard[row][col] === 1) {
-            newBoard[row][col] = 0;
-          } else {
-            newBoard[row][col] = 1;
-          }
-          return newBoard;
-        });
-        break;
-      case OnClickState.END:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (newBoard[row][col] !== 0) return newBoard;
-          newBoard[row][col] = 3;
-          newBoard[end[0]][end[1]] = 0;
-          setEnd([row, col]);
-          return newBoard;
-        });
-        break;
-    }
-  };
   const handleState = (state: OnClickState) => {
     if (state === onClickState) {
       setOnClickState(OnClickState.NULL);
@@ -167,18 +135,85 @@ export default function Home() {
   };
 
   const handleMouseUp = () => {
+    console.log('mouse up');
     setIsDrawing(false);
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent, row: number, col: number) => {
+    const node = document.getElementById('node-' + row + '-' + col);
+    if (!node) return;
     if (!isDrawing) return;
 
-    // Get the div element that was clicked
-    const targetDiv = e.target;
+    switch (onClickState) {
+      case OnClickState.ADD_WALL:
+        setBoard((prev) => {
+          const newBoard = [...prev];
+          if (newBoard[row][col] === 0) {
+            newBoard[row][col] = 1;
+          }
+          return newBoard;
+        });
+        node.classList.add('bg-black');
+        break;
+      case OnClickState.REMOVE_WALL:
+        setBoard((prev) => {
+          const newBoard = [...prev];
+          if (newBoard[row][col] === 1) {
+            newBoard[row][col] = 0;
+          }
+          return newBoard;
+        });
+        node.classList.remove('bg-black');
+        break;
+    }
+  };
 
-    // Add a class (e.g., 'wall') to the div to represent a wall
-    if (targetDiv instanceof HTMLDivElement) {
-      targetDiv.classList.add('bg-black');
+  const handleClick = (row: number, col: number) => {
+    const node = document.getElementById('node-' + row + '-' + col);
+    if (!node) return;
+    switch (onClickState) {
+      case OnClickState.ADD_WALL:
+        setBoard((prev) => {
+          const newBoard = [...prev];
+          if (newBoard[row][col] !== 0) return newBoard;
+          newBoard[row][col] = 1;
+          return newBoard;
+        });
+        node.classList.add('bg-black');
+        break;
+
+      case OnClickState.REMOVE_WALL:
+        setBoard((prev) => {
+          const newBoard = [...prev];
+          if (newBoard[row][col] !== 1) return newBoard;
+          newBoard[row][col] = 0;
+          return newBoard;
+        });
+        node.classList.remove('bg-black');
+        break;
+
+      case OnClickState.START:
+        setBoard((prev) => {
+          const newBoard = [...prev];
+          if (newBoard[row][col] !== 0) return newBoard;
+          newBoard[row][col] = 2;
+          newBoard[start[0]][start[1]] = 0;
+          setStart([row, col]);
+          return newBoard;
+        });
+        node.classList.add('bg-red-500');
+        break;
+      case OnClickState.END:
+        setBoard((prev) => {
+          const newBoard = [...prev];
+          if (newBoard[row][col] !== 0) return newBoard;
+          newBoard[row][col] = 3;
+          newBoard[end[0]][end[1]] = 0;
+          setEnd([row, col]);
+          return newBoard;
+        });
+        node.classList.add('bg-blue-500');
+        break;
     }
   };
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
@@ -209,11 +244,12 @@ export default function Home() {
       });
   };
 
+  // our animation for the path
   useEffect(() => {
     //clear the previous path
-    const pathElements = document.querySelectorAll('.bg-yellow-300');
+    const pathElements = document.querySelectorAll('.bg-yellow-400');
     pathElements.forEach((element) => {
-      element.classList.remove('bg-yellow-300');
+      element.classList.remove('bg-yellow-400');
     });
     // end the the visualization if there is no path
     if (!valid) return;
@@ -226,9 +262,9 @@ export default function Home() {
           'node-' + node[0] + '-' + node[1]
         );
         if (nodeElement) {
-          nodeElement.classList.add('bg-yellow-300');
+          nodeElement.classList.add('bg-yellow-400');
         }
-      }, 100 * i);
+      }, 20 * i);
     }
   }, [path, valid]);
 
@@ -243,13 +279,14 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-center gap-2 ">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 justify-items-center gap-2 ">
               <Button
                 variant="default"
                 size="sm"
                 onClick={() => handleState(OnClickState.START)}
                 className={cn(
-                  onClickState === OnClickState.START && 'text-slate-100'
+                  onClickState === OnClickState.START &&
+                    'bg-red-500 hover:bg-red-400'
                 )}
               >
                 Change Start Location
@@ -311,21 +348,6 @@ export default function Home() {
                           <Check size={26} />
                         </Button>
                       </div>
-                      <Label htmlFor="bfsCheck">Start Location</Label>
-                      <div className="grid grid-cols-7 items-center gap-4">
-                        <Label htmlFor="dfsCheck">x</Label>
-                        <Input
-                          id="dfsCheck"
-                          name="algorithm"
-                          className="col-span-2 h-8"
-                        />
-                        <Label htmlFor="dfsCheck">y</Label>
-                        <Input
-                          id="dfsCheck"
-                          name="algorithm"
-                          className="col-span-2 h-8"
-                        />
-                      </div>
                     </div>
                   </div>
                 </PopoverContent>
@@ -336,7 +358,8 @@ export default function Home() {
                 size="sm"
                 onClick={() => handleState(OnClickState.END)}
                 className={cn(
-                  onClickState === OnClickState.END && ' text-slate-100'
+                  onClickState === OnClickState.END &&
+                    ' bg-red-500 hover:bg-red-400'
                 )}
               >
                 Change End Location
@@ -401,12 +424,24 @@ export default function Home() {
               <Button
                 variant="default"
                 size="sm"
-                onClick={() => handleState(OnClickState.WALL)}
+                onClick={() => handleState(OnClickState.ADD_WALL)}
                 className={cn(
-                  onClickState === OnClickState.WALL && ' text-slate-100'
+                  onClickState === OnClickState.ADD_WALL &&
+                    ' bg-red-500 hover:bg-red-400'
                 )}
               >
                 Add Walls
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleState(OnClickState.REMOVE_WALL)}
+                className={cn(
+                  onClickState === OnClickState.REMOVE_WALL &&
+                    ' bg-red-500 hover:bg-red-400'
+                )}
+              >
+                Remove Walls
               </Button>
             </div>
           </CardContent>
@@ -415,7 +450,41 @@ export default function Home() {
           </CardFooter>
         </Card>
       </div>
-      <div className="flex mt-4 justify-center" id="board">
+      <div className="flex flex-col mt-4 justify-center" id="board">
+        <div className="flex justify-center">
+          {onClickState === OnClickState.START && (
+            <div className="flex flex-row items-center">
+              <ChevronsUpDown size={32} />
+              <p>Click on a node to set the start location</p>
+              <ChevronsUpDown size={32} />
+            </div>
+          )}
+
+          {onClickState === OnClickState.END && (
+            <div className="flex flex-row items-center">
+              <ChevronsUpDown size={32} />
+              <p>Click on a node to set the end location</p>
+
+              <ChevronsUpDown size={32} />
+            </div>
+          )}
+
+          {onClickState === OnClickState.ADD_WALL && (
+            <div className="flex flex-row items-center">
+              <ChevronsUpDown size={32} />
+              <p>Click and drag to add walls</p>
+              <ChevronsUpDown size={32} />
+            </div>
+          )}
+
+          {onClickState === OnClickState.REMOVE_WALL && (
+            <div className="flex flex-row items-center">
+              <ChevronsUpDown size={32} />
+              <p>Click and drag to remove walls</p>
+              <ChevronsUpDown size={32} />
+            </div>
+          )}
+        </div>
         <div className={cn(' rounded-lg flex flex-col justify-center')}>
           {board.map((row, i) => {
             return (
@@ -436,10 +505,10 @@ export default function Home() {
                       key={'node-' + i + '-' + j}
                       id={'node-' + i + '-' + j}
                       className={cn('h-2 w-2', bgColor)}
-                      onClick={() => handleClick(i, j)}
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
-                      onMouseMove={(e) => handleMouseMove(e)}
+                      onMouseMove={(e) => handleMouseMove(e, i, j)}
+                      onClick={() => handleClick(i, j)}
                     />
                   );
                 })}
