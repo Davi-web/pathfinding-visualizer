@@ -9,7 +9,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { HTMLInputTypeAttribute, useEffect, useState } from 'react';
+import {
+  HTMLInputTypeAttribute,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -76,8 +81,7 @@ export default function Home() {
   const [size, setSize] = useState([30, 30]);
   const [start, setStart] = useState([1, 1]);
   const [end, setEnd] = useState([size[0] - 2, size[1] - 2]);
-  const [algorithm, setAlgorithm] = useState('dfs');
-  const [valid, setValid] = useState(false);
+  const [algorithm, setAlgorithm] = useState('bfs');
   const [disabled, setDisabled] = useState(false);
 
   const [path, setPath] = useState([]);
@@ -123,6 +127,22 @@ export default function Home() {
       setOnClickState(OnClickState.NULL);
       return;
     }
+
+    toast({
+      title: 'You are changing: ' + state,
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-auto">
+          <code className="text-white">
+            {`Click${
+              state === OnClickState.ADD_WALL ||
+              state === OnClickState.REMOVE_WALL
+                ? ' or drag'
+                : ''
+            } to change the ${state} location`}
+          </code>
+        </pre>
+      ),
+    });
     setOnClickState(state);
   };
 
@@ -228,6 +248,7 @@ export default function Home() {
   };
 
   const runAlgorithm = () => {
+    console.log('Running algorithm');
     axios
       .post('/api/algorithms', {
         start: start,
@@ -236,14 +257,51 @@ export default function Home() {
         board: board,
       })
       .then((res) => {
+        if (!res.data.valid) {
+          toast({
+            title: 'No Path Found',
+            description: (
+              <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-auto">
+                <code className="text-white">{JSON.stringify(res.data)}</code>
+              </pre>
+            ),
+          });
+          return;
+        }
+
         setPath(res.data.path);
-        setValid(res.data.valid);
+        toast({
+          title: 'We Found a Path!',
+          description: (
+            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-auto">
+              <code className="text-white">{JSON.stringify(res.data)}</code>
+            </pre>
+          ),
+        });
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
+  // const animations = useCallback(() => {
+  //   const pathElements = document.querySelectorAll('.bg-yellow-400');
+  //   pathElements.forEach((element) => {
+  //     element.classList.remove('bg-yellow-400');
+  //   });
+  //   if (path.length === 0) return;
+  //   for (let i = 1; i < path.length - 1; i++) {
+  //     setTimeout(() => {
+  //       const node = path[i];
+  //       const nodeElement = document.getElementById(
+  //         'node-' + node[0] + '-' + node[1]
+  //       );
+  //       if (nodeElement) {
+  //         nodeElement.classList.add('bg-yellow-400');
+  //       }
+  //     }, 20 * i);
+  //   }
+  // }, [path]);
   // our animation for the path
   useEffect(() => {
     //clear the previous path
@@ -252,7 +310,9 @@ export default function Home() {
       element.classList.remove('bg-yellow-400');
     });
     // end the the visualization if there is no path
-    if (!valid) return;
+    if (path.length === 0) {
+      return;
+    }
     //add the new path
     //ignore the first and last node
     for (let i = 1; i < path.length - 1; i++) {
@@ -266,7 +326,7 @@ export default function Home() {
         }
       }, 20 * i);
     }
-  }, [path, valid]);
+  }, [path]);
 
   return (
     <main className="flex flex-col min-h-screen justify-start w-full">
@@ -446,7 +506,9 @@ export default function Home() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button onClick={runAlgorithm}>Visualize the Path</Button>
+            <Button onClick={runAlgorithm} disabled={disabled}>
+              Visualize Path
+            </Button>
           </CardFooter>
         </Card>
       </div>
@@ -504,7 +566,7 @@ export default function Home() {
                     <div
                       key={'node-' + i + '-' + j}
                       id={'node-' + i + '-' + j}
-                      className={cn('h-2 w-2', bgColor)}
+                      className={cn('h-3 w-3', bgColor)}
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
                       onMouseMove={(e) => handleMouseMove(e, i, j)}
