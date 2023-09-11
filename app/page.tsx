@@ -172,7 +172,6 @@ export default function Home() {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDrawing) return;
-    console.log('WE ARE MOVING');
 
     // Get the div element that was clicked
     const targetDiv = e.target;
