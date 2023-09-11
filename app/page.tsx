@@ -73,7 +73,7 @@ type state = {
 };
 
 export default function Home() {
-  const [size, setSize] = useState([10, 10]);
+  const [size, setSize] = useState([30, 30]);
   const [start, setStart] = useState([1, 1]);
   const [end, setEnd] = useState([size[0] - 2, size[1] - 2]);
   const [algorithm, setAlgorithm] = useState('dfs');
@@ -416,14 +416,14 @@ export default function Home() {
         </Card>
       </div>
       <div className="flex mt-4 justify-center" id="board">
-        <div className=" rounded-lg flex flex-col justify-center w-96 h-96 bg-red-300">
+        <div className={cn(' rounded-lg flex flex-col justify-center')}>
           {board.map((row, i) => {
             return (
               <div className="flex justify-center" key={i}>
                 {row.map((col, j) => {
                   let bgColor = 'bg-green-200';
                   if (col === BOARDSTATE.START) {
-                    bgColor = 'bg-red-200';
+                    bgColor = 'bg-red-500';
                   }
                   if (col === BOARDSTATE.END) {
                     bgColor = 'bg-blue-500';
@@ -435,7 +435,7 @@ export default function Home() {
                     <div
                       key={'node-' + i + '-' + j}
                       id={'node-' + i + '-' + j}
-                      className={cn('h-4 w-4', bgColor)}
+                      className={cn('h-2 w-2', bgColor)}
                       onClick={() => handleClick(i, j)}
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
