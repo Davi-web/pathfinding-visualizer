@@ -446,7 +446,7 @@ export default function Home() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button onClick={runAlgorithm}>Generate Shortest Path</Button>
+            <Button onClick={runAlgorithm}>Visualize the Path</Button>
           </CardFooter>
         </Card>
       </div>
