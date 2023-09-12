@@ -436,7 +436,8 @@ export default function Home() {
           <CardHeader>
             <CardTitle className="text-center">Node Path visualizer</CardTitle>
             <CardDescription className="text-center">
-              Click the buttons below to change it on the board
+              Visualize different path finding algorithms by creating your own
+              board
             </CardDescription>
           </CardHeader>
           <CardContent>
