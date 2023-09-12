@@ -105,6 +105,103 @@ export default function Home() {
     }
     return board;
   };
+
+  function shuffleArray(array: any[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+  const generateRandomBoard = (m: number, n: number) => {
+    const board = generateBoard(m, n);
+    const visited = new Set();
+    const queue = [];
+    const start = [1, 1];
+    const end = [m - 2, n - 2];
+    const directions = [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ];
+    queue.push(start);
+    while (queue.length > 0) {
+      const [row, col] = queue.shift() as number[];
+      if (row === end[0] && col === end[1]) {
+        break;
+      }
+      if (visited.has(row + '-' + col)) {
+        continue;
+      }
+      visited.add(row + '-' + col);
+      board[row][col] = 1;
+      shuffleArray(directions);
+      for (const [x, y] of directions) {
+        const newRow = row + x;
+        const newCol = col + y;
+        if (
+          newRow < 0 ||
+          newRow >= m ||
+          newCol < 0 ||
+          newCol >= n ||
+          visited.has(newRow + '-' + newCol)
+        ) {
+          continue;
+        }
+        queue.push([newRow, newCol]);
+      }
+    }
+    board[start[0]][start[1]] = 2;
+    board[end[0]][end[1]] = 3;
+    setBoard(board);
+    return board;
+  };
+
+  const generateRandomBoardFromDFS = (m: number, n: number) => {
+    const board = generateBoard(m, n);
+    const visited = new Set();
+    const stack = [];
+    const start = [1, 1];
+    const end = [m - 2, n - 2];
+    const directions = [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ];
+    stack.push(start);
+    while (stack.length > 0) {
+      const [row, col] = stack.pop() as number[];
+      if (row === end[0] && col === end[1]) {
+        break;
+      }
+      if (visited.has(row + '-' + col)) {
+        continue;
+      }
+      visited.add(row + '-' + col);
+      board[row][col] = 1;
+      shuffleArray(directions);
+      for (const [x, y] of directions) {
+        const newRow = row + x;
+        const newCol = col + y;
+        if (
+          newRow < 0 ||
+          newRow >= m ||
+          newCol < 0 ||
+          newCol >= n ||
+          visited.has(newRow + '-' + newCol)
+        ) {
+          continue;
+        }
+        stack.push([newRow, newCol]);
+      }
+    }
+    board[start[0]][start[1]] = 2;
+    board[end[0]][end[1]] = 3;
+    setBoard(board);
+
+    return board;
+  };
   const [board, setBoard] = useState(generateBoard(size[0], size[1]));
 
   enum OnClickState {
@@ -510,6 +607,12 @@ export default function Home() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
+            <Button
+              onClick={() => generateRandomBoardFromDFS(size[0], size[1])}
+              disabled={disabled}
+            >
+              Generate Random Board
+            </Button>
             <Button onClick={runAlgorithm} disabled={disabled}>
               Visualize Path
             </Button>
