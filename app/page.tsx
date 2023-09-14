@@ -1,5 +1,7 @@
 'use client';
+
 import Image from 'next/image';
+import { createRoot } from 'react-dom/client';
 import {
   Card,
   CardContent,
@@ -9,12 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import {
-  HTMLInputTypeAttribute,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import {
   Command,
   CommandEmpty,
@@ -51,6 +48,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@/components/ui/use-toast';
 
 import { ChevronsUpDown, Check } from 'lucide-react';
+import { Toaster } from '@/components/ui/toaster';
+import { MoveUp } from 'lucide-react';
 
 const algorithms = [
   { label: 'A*', value: 'astar' },
@@ -81,7 +80,7 @@ export default function Home() {
   const [size, setSize] = useState([30, 30]);
   const [start, setStart] = useState([1, 1]);
   const [end, setEnd] = useState([size[0] - 2, size[1] - 2]);
-  const [algorithm, setAlgorithm] = useState('bfs');
+  const [algorithm, setAlgorithm] = useState('astar');
   const [disabled, setDisabled] = useState(false);
 
   const [path, setPath] = useState([]);
@@ -112,95 +111,49 @@ export default function Home() {
       [array[i], array[j]] = [array[j], array[i]];
     }
   }
-  const generateRandomBoard = (m: number, n: number) => {
-    const board = generateBoard(m, n);
-    const visited = new Set();
-    const queue = [];
-    const start = [1, 1];
-    const end = [m - 2, n - 2];
-    const directions = [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ];
-    queue.push(start);
-    while (queue.length > 0) {
-      const [row, col] = queue.shift() as number[];
-      if (row === end[0] && col === end[1]) {
-        break;
-      }
-      if (visited.has(row + '-' + col)) {
-        continue;
-      }
-      visited.add(row + '-' + col);
-      board[row][col] = 1;
-      shuffleArray(directions);
-      for (const [x, y] of directions) {
-        const newRow = row + x;
-        const newCol = col + y;
-        if (
-          newRow < 0 ||
-          newRow >= m ||
-          newCol < 0 ||
-          newCol >= n ||
-          visited.has(newRow + '-' + newCol)
-        ) {
-          continue;
+
+  const clearBoard = () => {
+    setPath([]);
+    setBoard((prev) => {
+      const newBoard = [...prev];
+      for (let i = 1; i < newBoard.length - 1; i++) {
+        for (let j = 1; j < newBoard[i].length - 1; j++) {
+          if (newBoard[i][j] === 1) {
+            newBoard[i][j] = 0;
+          }
+          const node = document.getElementById('node-' + i + '-' + j);
+          if (node) {
+            node.classList.remove('bg-yellow-400');
+            createRoot(node).unmount();
+          }
         }
-        queue.push([newRow, newCol]);
       }
-    }
-    board[start[0]][start[1]] = 2;
-    board[end[0]][end[1]] = 3;
-    setBoard(board);
-    return board;
+      return newBoard;
+    });
   };
 
-  const generateRandomBoardFromDFS = (m: number, n: number) => {
-    const board = generateBoard(m, n);
-    const visited = new Set();
-    const stack = [];
-    const start = [1, 1];
-    const end = [m - 2, n - 2];
-    const directions = [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ];
-    stack.push(start);
-    while (stack.length > 0) {
-      const [row, col] = stack.pop() as number[];
-      if (row === end[0] && col === end[1]) {
-        break;
-      }
-      if (visited.has(row + '-' + col)) {
-        continue;
-      }
-      visited.add(row + '-' + col);
-      board[row][col] = 1;
-      shuffleArray(directions);
-      for (const [x, y] of directions) {
-        const newRow = row + x;
-        const newCol = col + y;
-        if (
-          newRow < 0 ||
-          newRow >= m ||
-          newCol < 0 ||
-          newCol >= n ||
-          visited.has(newRow + '-' + newCol)
-        ) {
-          continue;
-        }
-        stack.push([newRow, newCol]);
-      }
-    }
-    board[start[0]][start[1]] = 2;
-    board[end[0]][end[1]] = 3;
-    setBoard(board);
+  const generateRandomBoard = (m: number, n: number) => {
+    // generate random board with 0 for path and 1 for wall 2 for start and 3 for end, the edges are all walls
+    clearBoard();
 
-    return board;
+    setBoard((prev) => {
+      const newBoard = [...prev];
+      for (let i = 1; i < newBoard.length - 1; i++) {
+        for (let j = 1; j < newBoard[i].length - 1; j++) {
+          if (newBoard[i][j] === 2 || newBoard[i][j] === 3) continue;
+          const random = Math.random();
+          if (random < 0.3) {
+            newBoard[i][j] = 1;
+          }
+
+          const node = document.getElementById('node-' + i + '-' + j);
+          if (node) {
+            node.classList.remove('bg-yellow-400');
+          }
+        }
+      }
+      return newBoard;
+    });
   };
   const [board, setBoard] = useState(generateBoard(size[0], size[1]));
 
@@ -263,6 +216,7 @@ export default function Home() {
 
     switch (onClickState) {
       case OnClickState.ADD_WALL:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] === 0) {
@@ -273,14 +227,24 @@ export default function Home() {
         node.classList.add('bg-black');
         break;
       case OnClickState.REMOVE_WALL:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
+          if (
+            row === 0 ||
+            col === 0 ||
+            row === newBoard.length - 1 ||
+            col === newBoard[0].length - 1
+          )
+            return newBoard;
           if (newBoard[row][col] === 1) {
             newBoard[row][col] = 0;
           }
           return newBoard;
         });
-        node.classList.remove('bg-black');
+        if (!node.classList.contains('wall')) {
+          node.classList.remove('bg-black');
+        }
         break;
     }
   };
@@ -290,6 +254,7 @@ export default function Home() {
     if (!node) return;
     switch (onClickState) {
       case OnClickState.ADD_WALL:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
@@ -300,16 +265,28 @@ export default function Home() {
         break;
 
       case OnClickState.REMOVE_WALL:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
+          if (
+            row === 0 ||
+            col === 0 ||
+            row === newBoard.length - 1 ||
+            col === newBoard[0].length - 1
+          )
+            return newBoard;
           if (newBoard[row][col] !== 1) return newBoard;
           newBoard[row][col] = 0;
           return newBoard;
         });
-        node.classList.remove('bg-black');
+        if (!node.classList.contains('wall')) {
+          node.classList.remove('bg-black');
+        }
+
         break;
 
       case OnClickState.START:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
@@ -323,6 +300,7 @@ export default function Home() {
         }
         break;
       case OnClickState.END:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
@@ -358,6 +336,9 @@ export default function Home() {
         board: board,
       })
       .then((res) => {
+        setPath(res.data.path);
+        setDisabled(true);
+
         if (!res.data.valid) {
           toast({
             title: 'No Path Found',
@@ -370,7 +351,6 @@ export default function Home() {
           return;
         }
 
-        setPath(res.data.path);
         toast({
           title: 'We Found a Path!',
           description: (
@@ -384,46 +364,109 @@ export default function Home() {
         console.log(err);
       });
   };
-
-  // const animations = useCallback(() => {
-  //   const pathElements = document.querySelectorAll('.bg-yellow-400');
-  //   pathElements.forEach((element) => {
-  //     element.classList.remove('bg-yellow-400');
-  //   });
-  //   if (path.length === 0) return;
-  //   for (let i = 1; i < path.length - 1; i++) {
-  //     setTimeout(() => {
-  //       const node = path[i];
-  //       const nodeElement = document.getElementById(
-  //         'node-' + node[0] + '-' + node[1]
-  //       );
-  //       if (nodeElement) {
-  //         nodeElement.classList.add('bg-yellow-400');
-  //       }
-  //     }, 20 * i);
-  //   }
-  // }, [path]);
-  // our animation for the path
-  useEffect(() => {
-    //clear the previous path
-    const pathElements = document.querySelectorAll('.bg-yellow-400');
+  const clearAnimations = () => {
+    const pathElements = document.querySelectorAll('.bg-purple-400');
     pathElements.forEach((element) => {
-      element.classList.remove('bg-yellow-400');
+      element.classList.remove('bg-purple-400');
+      createRoot(element).unmount();
     });
+  };
+
+  useEffect(() => {
+    //clear the previous path to restart the animation
+    clearAnimations();
     // end the the visualization if there is no path
     if (path.length === 0) {
       return;
     }
     //add the new path
     //ignore the first and last node
+    // we will also inform the direction of the path
+    const stack = [
+      'bg-yellow-400',
+      'bg-purple-400',
+      'bg-green-400',
+      'bg-rose-400',
+    ];
     for (let i = 1; i < path.length - 1; i++) {
       setTimeout(() => {
         const node = path[i];
+
         const nodeElement = document.getElementById(
           'node-' + node[0] + '-' + node[1]
         );
-        if (nodeElement) {
-          nodeElement.classList.add('bg-yellow-400');
+        const prevNode = path[i - 1];
+        const prevNodeElement = document.getElementById(
+          'node-' + prevNode[0] + '-' + prevNode[1]
+        );
+        let direction = [0, 0];
+
+        if (nodeElement && prevNodeElement) {
+          direction = [node[0] - prevNode[0], node[1] - prevNode[1]];
+          if (direction[0] > 0 && direction[1] === 0) {
+            // move down
+            createRoot(nodeElement).render(
+              <MoveUp
+                size={10}
+                className="transform flex justify-center rotate-180"
+              />
+            );
+          } else if (direction[0] < 0 && direction[1] === 0) {
+            //move up
+
+            createRoot(nodeElement).render(
+              <MoveUp
+                size={10}
+                className="transform flex justify-center rotate-0"
+              />
+            );
+          } else if (direction[0] === 0 && direction[1] > 0) {
+            // move right
+            createRoot(nodeElement).render(
+              <MoveUp
+                size={10}
+                className="transform flex justify-center rotate-90"
+              />
+            );
+          } else if (direction[0] === 0 && direction[1] < 0) {
+            // move left
+            createRoot(nodeElement).render(
+              <MoveUp size={10} className="transform -rotate-90" />
+            );
+          } else if (direction[0] > 0 && direction[1] > 0) {
+            createRoot(nodeElement).render(
+              <MoveUp
+                size={10}
+                className="transform flex justify-center rotate-135"
+              />
+            );
+          } else if (direction[0] < 0 && direction[1] < 0) {
+            createRoot(nodeElement).render(
+              <MoveUp
+                size={10}
+                className="transform flex justify-center rotate-315"
+              />
+            );
+          } else if (direction[0] < 0 && direction[1] < 0) {
+            createRoot(nodeElement).render(
+              <MoveUp
+                size={10}
+                className="transform flex justify-center rotate-225"
+              />
+            );
+          } else if (direction[0] < 0 && direction[1] > 0) {
+            createRoot(nodeElement).render(
+              <MoveUp
+                size={10}
+                className="transform flex justify-center rotate-45"
+              />
+            );
+          }
+
+          nodeElement.classList.add(stack[1]);
+        }
+        if (i === path.length - 2) {
+          setDisabled(false);
         }
       }, 20 * i);
     }
@@ -441,11 +484,12 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 justify-items-center gap-2 ">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 justify-items-center gap-2">
               <Button
                 variant="default"
                 size="sm"
                 onClick={() => handleState(OnClickState.START)}
+                disabled={disabled}
                 className={cn(
                   onClickState === OnClickState.START &&
                     'bg-red-500 hover:bg-red-400'
@@ -455,7 +499,9 @@ export default function Home() {
               </Button>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="default">Dimensions</Button>
+                  <Button variant="default" disabled={disabled}>
+                    Dimensions
+                  </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80">
                   <div className="grid gap-4">
@@ -506,6 +552,7 @@ export default function Home() {
                             setEnd([size[0] - 2, size[1] - 2]);
                             setStart([1, 1]);
                           }}
+                          disabled={disabled}
                         >
                           <Check size={26} />
                         </Button>
@@ -521,15 +568,18 @@ export default function Home() {
                 onClick={() => handleState(OnClickState.END)}
                 className={cn(
                   onClickState === OnClickState.END &&
-                    ' bg-red-500 hover:bg-red-400'
+                    ' bg-blue-500 hover:bg-blue-400'
                 )}
+                disabled={disabled}
               >
                 Change End Location
               </Button>
 
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="default">Algorithms</Button>
+                  <Button variant="default" disabled={disabled}>
+                    Algorithms
+                  </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80">
                   <div className="grid gap-4">
@@ -591,6 +641,7 @@ export default function Home() {
                   onClickState === OnClickState.ADD_WALL &&
                     ' bg-red-500 hover:bg-red-400'
                 )}
+                disabled={disabled}
               >
                 Add Walls
               </Button>
@@ -602,17 +653,21 @@ export default function Home() {
                   onClickState === OnClickState.REMOVE_WALL &&
                     ' bg-red-500 hover:bg-red-400'
                 )}
+                disabled={disabled}
               >
                 Remove Walls
               </Button>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-center">
+          <CardFooter className="flex justify-center gap-2">
             <Button
-              onClick={() => generateRandomBoardFromDFS(size[0], size[1])}
+              onClick={() => generateRandomBoard(size[0], size[1])}
               disabled={disabled}
             >
               Generate Random Board
+            </Button>
+            <Button onClick={() => clearBoard()} disabled={disabled}>
+              Clear Board
             </Button>
             <Button onClick={runAlgorithm} disabled={disabled}>
               Visualize Path
@@ -622,35 +677,35 @@ export default function Home() {
       </div>
       <div className="flex flex-col mt-4 justify-center" id="board">
         <div className="flex justify-center">
-          {onClickState === OnClickState.START && (
+          {onClickState === OnClickState.START ? (
             <div className="flex flex-row items-center">
               <ChevronsUpDown size={32} />
               <p>Click on a node to set the start location</p>
               <ChevronsUpDown size={32} />
             </div>
-          )}
-
-          {onClickState === OnClickState.END && (
+          ) : onClickState === OnClickState.END ? (
             <div className="flex flex-row items-center">
               <ChevronsUpDown size={32} />
               <p>Click on a node to set the end location</p>
 
               <ChevronsUpDown size={32} />
             </div>
-          )}
-
-          {onClickState === OnClickState.ADD_WALL && (
+          ) : onClickState === OnClickState.ADD_WALL ? (
             <div className="flex flex-row items-center">
               <ChevronsUpDown size={32} />
               <p>Click and drag to add walls</p>
               <ChevronsUpDown size={32} />
             </div>
-          )}
-
-          {onClickState === OnClickState.REMOVE_WALL && (
+          ) : onClickState === OnClickState.REMOVE_WALL ? (
             <div className="flex flex-row items-center">
               <ChevronsUpDown size={32} />
               <p>Click and drag to remove walls</p>
+              <ChevronsUpDown size={32} />
+            </div>
+          ) : (
+            <div className="flex flex-row items-center">
+              <ChevronsUpDown size={32} />
+              <p>Visualizo.io</p>
               <ChevronsUpDown size={32} />
             </div>
           )}
@@ -670,11 +725,15 @@ export default function Home() {
                   if (col === BOARDSTATE.WALL) {
                     bgColor = 'bg-black';
                   }
+                  let wall = '';
+                  if (col === BOARDSTATE.WALL) {
+                    wall = 'wall';
+                  }
                   return (
                     <div
                       key={'node-' + i + '-' + j}
                       id={'node-' + i + '-' + j}
-                      className={cn('h-3 w-3', bgColor)}
+                      className={cn('h-3 w-3', bgColor, wall)}
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
                       onMouseMove={(e) => handleMouseMove(e, i, j)}
@@ -687,6 +746,7 @@ export default function Home() {
           })}
         </div>
       </div>
+      <Toaster />
     </main>
   );
 }
