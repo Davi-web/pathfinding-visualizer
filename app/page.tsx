@@ -328,6 +328,7 @@ export default function Home() {
 
   const runAlgorithm = () => {
     console.log('Running algorithm');
+    setDisabled(true);
     axios
       .post('/api/algorithms', {
         start: start,
@@ -337,7 +338,6 @@ export default function Home() {
       })
       .then((res) => {
         setPath(res.data.path);
-        setDisabled(true);
 
         if (!res.data.valid) {
           toast({
