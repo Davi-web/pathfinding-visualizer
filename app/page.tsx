@@ -378,6 +378,7 @@ export default function Home() {
     clearAnimations();
     // end the the visualization if there is no path
     if (path.length === 0) {
+      setDisabled(false);
       return;
     }
     //add the new path
