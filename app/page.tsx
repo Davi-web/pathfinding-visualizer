@@ -327,9 +327,9 @@ export default function Home() {
   };
 
   const runAlgorithm = () => {
-    console.log('Running algorithm');
+    console.log('Running algorithm', algorithm);
     setDisabled(true);
-    setOnClickState(OnClickState.NULL);
+
     axios
       .post('/api/algorithms', {
         start: start,
