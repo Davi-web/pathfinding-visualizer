@@ -19,15 +19,15 @@ class AlgorithmModel(BaseModel):
     end: List[int]
 
 
-@app.get("/api/docs")
+@app.get("/")
 async def main():
     # Redirect to /docs (relative URL)
-    return RedirectResponse(url="/docs")
+    return RedirectResponse(url="/docs", status_code=302)
 
 
 @app.get("/api/openai.json")
 async def openai():
-    return RedirectResponse(url="/openai.json")
+    return RedirectResponse(url="/openai.json", status_code=302)
 
 
 @app.get('/api/python')
