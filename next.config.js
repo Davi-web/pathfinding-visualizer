@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   async rewrites() {
     return {
@@ -14,18 +15,12 @@ const nextConfig = {
       afterFiles: [
         {
           source: '/docs',
-          destination:
-            process.env.NODE_ENV === 'development'
-              ? 'http://127.0.01:8000/docs'
-              : '/:8000/docs',
+          destination: 'http://127.0.01:8000/docs',
         },
 
         {
           source: '/openapi.json',
-          destination:
-            process.env.NODE_ENV === 'development'
-              ? 'http://127.0.01:8000/openapi.json'
-              : '/api/openapi.json',
+          destination: 'http://127.0.01:8000/openapi.json',
         },
       ],
 
