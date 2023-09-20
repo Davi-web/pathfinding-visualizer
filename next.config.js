@@ -18,7 +18,7 @@ const nextConfig = {
           destination:
             process.env.NODE_ENV === 'development'
               ? 'http://127.0.01:8000/docs'
-              : process.env.NEXT_PUBLIC_API_URL + '/docs',
+              : process.env.VERCEL_URL + 'docs',
         },
 
         {
@@ -26,7 +26,7 @@ const nextConfig = {
           destination:
             process.env.NODE_ENV === 'development'
               ? 'http://127.0.01:8000/openapi.json'
-              : process.env.NEXT_PUBLIC_API_URL + '/api/openapi.json',
+              : process.env.VERCEL_URL + '/openapi.json',
         },
       ],
 
