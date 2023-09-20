@@ -15,12 +15,18 @@ const nextConfig = {
       afterFiles: [
         {
           source: '/docs',
-          destination: 'http://127.0.01:8000/docs',
+          destination:
+            process.env.NODE_ENV === 'development'
+              ? 'http://127.0.01:8000/docs'
+              : process.env.NEXT_PUBLIC_API_URL + '/docs',
         },
 
         {
           source: '/openapi.json',
-          destination: 'http://127.0.01:8000/openapi.json',
+          destination:
+            process.env.NODE_ENV === 'development'
+              ? 'http://127.0.01:8000/openapi.json'
+              : process.env.NEXT_PUBLIC_API_URL + '/api/openapi.json',
         },
       ],
 
