@@ -17,7 +17,7 @@ const nextConfig = {
           destination:
             process.env.NODE_ENV === 'development'
               ? 'http://127.0.01:8000/docs'
-              : ':8000/docs',
+              : '/:8000/docs',
         },
 
         {
