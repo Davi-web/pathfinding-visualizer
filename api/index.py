@@ -5,10 +5,9 @@ from pydantic import BaseModel, Json
 from algorithms import dfs, bfs, dijkstra, astar
 
 app = FastAPI(
-    title="ChimichangApp",
+    title="Pathfinding Visualizer",
     summary="Craft visualized pathways on an m x n board using custom walls for algorithmic exploration",
     version="0.0.1",
-
 )
 
 
@@ -23,6 +22,12 @@ class AlgorithmModel(BaseModel):
 async def main():
     # Redirect to /docs (relative URL)
     return RedirectResponse(url="/docs", status_code=302)
+
+
+@app.get("/api/redoc")
+async def main():
+    # Redirect to /redoc (relative URL)
+    return RedirectResponse(url="/redoc", status_code=302)
 
 
 @app.get("/api/openai.json")
