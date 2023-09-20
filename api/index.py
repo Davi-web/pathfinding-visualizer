@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from typing import Any, List, Optional
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Json
-
 from algorithms import dfs, bfs, dijkstra, astar
 
 app = FastAPI(
@@ -17,6 +17,17 @@ class AlgorithmModel(BaseModel):
     algorithm: str
     start: List[int]
     end: List[int]
+
+
+@app.get("/api/docs")
+async def main():
+    # Redirect to /docs (relative URL)
+    return RedirectResponse(url="/docs")
+
+
+@app.get("/api/openai.json")
+async def openai():
+    return RedirectResponse(url="/openai.json")
 
 
 @app.get('/api/python')
