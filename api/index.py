@@ -19,7 +19,7 @@ class AlgorithmModel(BaseModel):
     end: List[int]
 
 
-@app.get("/")
+@app.get("/api/docs")
 async def main():
     # Redirect to /docs (relative URL)
     return RedirectResponse(url="/docs", status_code=302)
