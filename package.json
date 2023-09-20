@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "pip3 install -r requirements.txt"
+    "postinstall": " python3 -m venv env && . env/bin/activate &&pip3 install -r requirements.txt"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
