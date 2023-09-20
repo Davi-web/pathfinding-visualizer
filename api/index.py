@@ -6,19 +6,9 @@ from algorithms import dfs, bfs, dijkstra, astar
 
 app = FastAPI(
     title="ChimichangApp",
-    description=description,
-    summary="Deadpool's favorite app. Nuff said.",
+    summary="Craft visualized pathways on an m x n board using custom walls for algorithmic exploration",
     version="0.0.1",
-    terms_of_service="http://example.com/terms/",
-    contact={
-        "name": "Deadpoolio the Amazing",
-        "url": "http://x-force.example.com/contact/",
-        "email": "dp@x-force.example.com",
-    },
-    license_info={
-        "name": "Apache 2.0",
-        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
-    },
+
 )
 
 
@@ -29,7 +19,7 @@ class AlgorithmModel(BaseModel):
     end: List[int]
 
 
-@app.get('/api/python')
+@app.get('/api/')
 def hello_world():
     return {'message': 'Hello World'}
 
