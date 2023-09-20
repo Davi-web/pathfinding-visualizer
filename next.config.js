@@ -4,6 +4,15 @@ const nextConfig = {
     return {
       beforeFiles: [
         {
+          source: '/api/:path*',
+          destination:
+            process.env.NODE_ENV === 'development'
+              ? 'http://127.0.01:8000/api/:path*'
+              : '/api/',
+        },
+      ],
+      afterFiles: [
+        {
           source: '/docs',
           destination:
             process.env.NODE_ENV === 'development'
@@ -17,15 +26,6 @@ const nextConfig = {
             process.env.NODE_ENV === 'development'
               ? 'http://127.0.01:8000/openapi.json'
               : '/api/openapi.json',
-        },
-      ],
-      afterFiles: [
-        {
-          source: '/api/:path*',
-          destination:
-            process.env.NODE_ENV === 'development'
-              ? 'http://127.0.01:8000/api/:path*'
-              : '/api/',
         },
       ],
 

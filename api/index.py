@@ -19,7 +19,7 @@ class AlgorithmModel(BaseModel):
     end: List[int]
 
 
-@app.get('/api/')
+@app.get('/api/python')
 def hello_world():
     return {'message': 'Hello World'}
 
