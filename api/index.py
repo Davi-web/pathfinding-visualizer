@@ -6,7 +6,8 @@ from algorithms import dfs, bfs, dijkstra, astar
 
 app = FastAPI(
     title="Pathfinding Visualizer",
-    summary="Craft visualized pathways on an m x n board using custom walls for algorithmic exploration",
+    summary="Craft visualized pathways on an m x n board using custom walls for algorithmic exploration.",
+    description="We were able to create the algorithms to solve the maze using python and FastAPI.",
     version="0.0.1",
 )
 

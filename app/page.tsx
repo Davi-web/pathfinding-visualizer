@@ -18,7 +18,13 @@ import { Input } from '@/components/ui/input';
 
 import { Label } from '@/components/ui/label';
 import axios from 'axios';
-import { Settings } from 'lucide-react';
+import {
+  PersonStanding,
+  DoorOpen,
+  Github,
+  Database,
+  FileJson,
+} from 'lucide-react';
 
 import {
   Popover,
@@ -44,12 +50,15 @@ import {
 } from '@/components/ui/form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 import { toast } from '@/components/ui/use-toast';
 
 import { ChevronsUpDown, Check } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 import { MoveUp } from 'lucide-react';
+import { generateBoard, clearAnimations } from '@/lib/helper';
+import Typewriter from 'typewriter-effect';
 
 const algorithms = [
   { label: 'A*', value: 'astar' },
@@ -77,33 +86,13 @@ type state = {
 };
 
 export default function Home() {
-  const [size, setSize] = useState([30, 30]);
+  const [size, setSize] = useState([20, 30]);
   const [start, setStart] = useState([1, 1]);
   const [end, setEnd] = useState([size[0] - 2, size[1] - 2]);
   const [algorithm, setAlgorithm] = useState('astar');
   const [disabled, setDisabled] = useState(false);
 
   const [path, setPath] = useState([]);
-  const generateBoard = (m: number, n: number) => {
-    const board = [];
-    for (let i = 0; i < m; i++) {
-      //push divs into board
-      const row = [];
-      for (let j = 0; j < n; j++) {
-        if (i === 1 && j === 1) {
-          row.push(2);
-        } else if (i === m - 2 && j === n - 2) {
-          row.push(3);
-        } else if (i == 0 || j == 0 || i == m - 1 || j == n - 1) {
-          row.push(1);
-        } else {
-          row.push(0);
-        }
-      }
-      board.push(row);
-    }
-    return board;
-  };
 
   function shuffleArray(array: any[]) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -123,8 +112,7 @@ export default function Home() {
           }
           const node = document.getElementById('node-' + i + '-' + j);
           if (node) {
-            node.classList.remove('bg-yellow-400');
-            createRoot(node).unmount();
+            node.classList.remove('bg-purple-400');
           }
         }
       }
@@ -148,7 +136,8 @@ export default function Home() {
 
           const node = document.getElementById('node-' + i + '-' + j);
           if (node) {
-            node.classList.remove('bg-yellow-400');
+            node.classList.remove('bg-purple-400');
+            createRoot(node).unmount();
           }
         }
       }
@@ -213,10 +202,10 @@ export default function Home() {
     const node = document.getElementById('node-' + row + '-' + col);
     if (!node) return;
     if (!isDrawing) return;
+    clearAnimations();
 
     switch (onClickState) {
       case OnClickState.ADD_WALL:
-        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] === 0) {
@@ -224,10 +213,8 @@ export default function Home() {
           }
           return newBoard;
         });
-        node.classList.add('bg-black');
         break;
       case OnClickState.REMOVE_WALL:
-        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (
@@ -242,30 +229,28 @@ export default function Home() {
           }
           return newBoard;
         });
-        if (!node.classList.contains('wall')) {
-          node.classList.remove('bg-black');
-        }
         break;
     }
   };
+  console.log('board', board);
+  console.log('start', start);
+  console.log('end', end);
 
   const handleClick = (row: number, col: number) => {
     const node = document.getElementById('node-' + row + '-' + col);
     if (!node) return;
+    clearAnimations();
     switch (onClickState) {
       case OnClickState.ADD_WALL:
-        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
           newBoard[row][col] = 1;
           return newBoard;
         });
-        node.classList.add('bg-black');
         break;
 
       case OnClickState.REMOVE_WALL:
-        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (
@@ -279,14 +264,9 @@ export default function Home() {
           newBoard[row][col] = 0;
           return newBoard;
         });
-        if (!node.classList.contains('wall')) {
-          node.classList.remove('bg-black');
-        }
-
         break;
 
       case OnClickState.START:
-        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
@@ -295,12 +275,9 @@ export default function Home() {
           setStart([row, col]);
           return newBoard;
         });
-        if (!node.classList.contains('bg-black')) {
-          node.classList.add('bg-red-500');
-        }
+
         break;
       case OnClickState.END:
-        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
@@ -309,12 +286,11 @@ export default function Home() {
           setEnd([row, col]);
           return newBoard;
         });
-        if (!node.classList.contains('bg-black')) {
-          node.classList.add('bg-blue-500');
-        }
+
         break;
     }
   };
+
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     toast({
       title: 'You submitted the following values:',
@@ -364,13 +340,6 @@ export default function Home() {
       .catch((err) => {
         console.log(err);
       });
-  };
-  const clearAnimations = () => {
-    const pathElements = document.querySelectorAll('.bg-purple-400');
-    pathElements.forEach((element) => {
-      element.classList.remove('bg-purple-400');
-      createRoot(element).unmount();
-    });
   };
 
   useEffect(() => {
@@ -479,198 +448,239 @@ export default function Home() {
       <div>
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">Node Path visualizer</CardTitle>
+            <CardTitle className="text-center">
+              <Typewriter
+                options={{
+                  strings: ['Node Path Visualizer', 'by David Ha'],
+                  autoStart: true,
+                  loop: true,
+                }}
+              />
+              <div className="flex justify-center">
+                <Link href={'/docs'}>
+                  <Database size={20} />
+                </Link>
+                <Link href={'/redoc'}>
+                  <FileJson size={20} />
+                </Link>
+                <Link
+                  href={'https://github.com/Davi-web/pathfinding-visualizer'}
+                >
+                  <Github size={20} />
+                </Link>
+              </div>
+            </CardTitle>
             <CardDescription className="text-center">
               Visualize different path finding algorithms by creating your own
               board
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 justify-items-center gap-2">
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleState(OnClickState.START)}
-                disabled={disabled}
-                className={cn(
-                  onClickState === OnClickState.START &&
-                    'bg-red-500 hover:bg-red-400'
-                )}
+            <div className="grid grid-cols-3  justify-items-center gap-2">
+              <div
+                id="change-location"
+                className="row-span-1 flex flex-col gap-1"
               >
-                Change Start Location
-              </Button>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="default" disabled={disabled}>
-                    Dimensions
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="grid gap-4">
-                    <div className="space-y-2">
-                      <h4 className="font-medium leading-none">Dimensions</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Set the dimensions for the layer.
-                      </p>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="">Board</Label>
+                <p className="text-lime-600 font-bold text-center">
+                  Change Locations
+                </p>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleState(OnClickState.START)}
+                  disabled={disabled}
+                  className={cn(
+                    onClickState === OnClickState.START &&
+                      'bg-red-500 hover:bg-red-400'
+                  )}
+                >
+                  Start
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleState(OnClickState.END)}
+                  className={cn(
+                    onClickState === OnClickState.END &&
+                      ' bg-blue-500 hover:bg-blue-400'
+                  )}
+                  disabled={disabled}
+                >
+                  End
+                </Button>
+              </div>
+              <div
+                className="row-span-1 flex flex-col gap-1 pt-6"
+                id="popovers"
+              >
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="default" disabled={disabled}>
+                      Maze Options
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80">
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium leading-none">Dimensions</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Set the dimensions for the layer.
+                        </p>
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="">Board</Label>
 
-                      <div className="grid grid-cols-8 items-center gap-4">
-                        <Label htmlFor="">x</Label>
-                        <Input
-                          id="x-input"
-                          name="x"
-                          className="col-span-2 h-8"
-                          type="number"
-                          value={size[0]}
-                          onChange={(e) => {
-                            setSize((prev) => [
-                              parseInt(e.target.value),
-                              prev[1],
-                            ]);
-                          }}
-                        />
-                        <Label htmlFor="">y</Label>
-                        <Input
-                          id="y-input"
-                          name="y"
-                          type="number"
-                          value={size[1]}
-                          onChange={(e) => {
-                            setSize((prev) => [
-                              prev[0],
-                              parseInt(e.target.value),
-                            ]);
-                          }}
-                          className="col-span-2 h-8"
-                        />
+                        <div className="grid grid-cols-8 items-center gap-4">
+                          <Label htmlFor="">x</Label>
+                          <Input
+                            id="x-input"
+                            name="x"
+                            className="col-span-2 h-8"
+                            type="number"
+                            value={size[0]}
+                            onChange={(e) => {
+                              setSize((prev) => [
+                                parseInt(e.target.value),
+                                prev[1],
+                              ]);
+                            }}
+                          />
+                          <Label htmlFor="">y</Label>
+                          <Input
+                            id="y-input"
+                            name="y"
+                            type="number"
+                            value={size[1]}
+                            onChange={(e) => {
+                              setSize((prev) => [
+                                prev[0],
+                                parseInt(e.target.value),
+                              ]);
+                            }}
+                            className="col-span-2 h-8"
+                          />
+                          <Button
+                            variant={'secondary'}
+                            size={'sm'}
+                            className="col-span-2"
+                            onClick={() => {
+                              setBoard(generateBoard(size[0], size[1]));
+                              setEnd([size[0] - 2, size[1] - 2]);
+                              setStart([1, 1]);
+                            }}
+                            disabled={disabled}
+                          >
+                            <Check size={26} />
+                          </Button>
+                        </div>
                         <Button
-                          variant={'secondary'}
-                          size={'sm'}
-                          className="col-span-2"
-                          onClick={() => {
-                            setBoard(generateBoard(size[0], size[1]));
-                            setEnd([size[0] - 2, size[1] - 2]);
-                            setStart([1, 1]);
-                          }}
+                          onClick={() => generateRandomBoard(size[0], size[1])}
                           disabled={disabled}
                         >
-                          <Check size={26} />
+                          Generate Random Board
+                        </Button>
+                        <Button
+                          onClick={() => clearBoard()}
+                          disabled={disabled}
+                        >
+                          Clear Board
                         </Button>
                       </div>
                     </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleState(OnClickState.END)}
-                className={cn(
-                  onClickState === OnClickState.END &&
-                    ' bg-blue-500 hover:bg-blue-400'
-                )}
-                disabled={disabled}
-              >
-                Change End Location
-              </Button>
-
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="default" disabled={disabled}>
-                    Algorithms
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <div className="grid gap-4">
-                    <div className="grid gap-2">
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="bfsCheck">BFS</Label>
-                        <Input
-                          id="bfsCheck"
-                          name="algorithm"
-                          type="radio"
-                          className="col-span-2 h-8"
-                          checked={algorithm === 'bfs'}
-                          onChange={() => setAlgorithm('bfs')}
-                        />
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="dfsCheck">DFS</Label>
-                        <Input
-                          id="dfsCheck"
-                          name="algorithm"
-                          type="radio"
-                          value={algorithm}
-                          onChange={() => setAlgorithm('dfs')}
-                          checked={algorithm === 'dfs'}
-                          className="col-span-2 h-8"
-                        />
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="dijkstra">Dijkstra</Label>
-                        <Input
-                          id="dijkstra"
-                          name="algorithm"
-                          onChange={() => setAlgorithm('dijkstra')}
-                          checked={algorithm === 'dijkstra'}
-                          type="radio"
-                          className="col-span-2 h-8"
-                        />
-                      </div>
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <Label htmlFor="astarButton">A*</Label>
-                        <Input
-                          id="astarButton"
-                          name="algorithm"
-                          onChange={() => setAlgorithm('astar')}
-                          checked={algorithm === 'astar'}
-                          type="radio"
-                          className="col-span-2 h-8"
-                        />
+                  </PopoverContent>
+                </Popover>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="default" disabled={disabled}>
+                      Algorithms
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80">
+                    <div className="grid gap-4">
+                      <div className="grid gap-2">
+                        <div className="grid grid-cols-3 items-center gap-4">
+                          <Label htmlFor="bfsCheck">BFS</Label>
+                          <Input
+                            id="bfsCheck"
+                            name="algorithm"
+                            type="radio"
+                            className="col-span-2 h-8"
+                            checked={algorithm === 'bfs'}
+                            onChange={() => setAlgorithm('bfs')}
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 items-center gap-4">
+                          <Label htmlFor="dfsCheck">DFS</Label>
+                          <Input
+                            id="dfsCheck"
+                            name="algorithm"
+                            type="radio"
+                            value={algorithm}
+                            onChange={() => setAlgorithm('dfs')}
+                            checked={algorithm === 'dfs'}
+                            className="col-span-2 h-8"
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 items-center gap-4">
+                          <Label htmlFor="dijkstra">Dijkstra</Label>
+                          <Input
+                            id="dijkstra"
+                            name="algorithm"
+                            onChange={() => setAlgorithm('dijkstra')}
+                            checked={algorithm === 'dijkstra'}
+                            type="radio"
+                            className="col-span-2 h-8"
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 items-center gap-4">
+                          <Label htmlFor="astarButton">A*</Label>
+                          <Input
+                            id="astarButton"
+                            name="algorithm"
+                            onChange={() => setAlgorithm('astar')}
+                            checked={algorithm === 'astar'}
+                            type="radio"
+                            className="col-span-2 h-8"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleState(OnClickState.ADD_WALL)}
-                className={cn(
-                  onClickState === OnClickState.ADD_WALL &&
-                    ' bg-red-500 hover:bg-red-400'
-                )}
-                disabled={disabled}
-              >
-                Add Walls
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleState(OnClickState.REMOVE_WALL)}
-                className={cn(
-                  onClickState === OnClickState.REMOVE_WALL &&
-                    ' bg-red-500 hover:bg-red-400'
-                )}
-                disabled={disabled}
-              >
-                Remove Walls
-              </Button>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div id="walls" className="row-span-1 flex flex-col gap-1">
+                <p className="text-lime-600 font-bold text-center">
+                  Change Walls
+                </p>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleState(OnClickState.ADD_WALL)}
+                  className={cn(
+                    onClickState === OnClickState.ADD_WALL &&
+                      ' bg-red-500 hover:bg-red-400'
+                  )}
+                  disabled={disabled}
+                >
+                  Add Walls
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleState(OnClickState.REMOVE_WALL)}
+                  className={cn(
+                    onClickState === OnClickState.REMOVE_WALL &&
+                      ' bg-red-500 hover:bg-red-400'
+                  )}
+                  disabled={disabled}
+                >
+                  Remove Walls
+                </Button>
+              </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-center gap-2">
-            <Button
-              onClick={() => generateRandomBoard(size[0], size[1])}
-              disabled={disabled}
-            >
-              Generate Random Board
-            </Button>
-            <Button onClick={() => clearBoard()} disabled={disabled}>
-              Clear Board
-            </Button>
             <Button onClick={runAlgorithm} disabled={disabled}>
               Visualize Path
             </Button>
@@ -731,16 +741,24 @@ export default function Home() {
                   if (col === BOARDSTATE.WALL) {
                     wall = 'wall';
                   }
+                  //add
                   return (
                     <div
                       key={'node-' + i + '-' + j}
                       id={'node-' + i + '-' + j}
-                      className={cn('h-3 w-3', bgColor, wall)}
+                      className={cn('h-3 w-3 lg:h-4 lg:w-4', bgColor, wall)}
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
                       onMouseMove={(e) => handleMouseMove(e, i, j)}
                       onClick={() => handleClick(i, j)}
-                    />
+                    >
+                      {col === BOARDSTATE.START && (
+                        <PersonStanding size={15} className="" />
+                      )}
+                      {col === BOARDSTATE.END && (
+                        <DoorOpen size={15} className="" />
+                      )}
+                    </div>
                   );
                 })}
               </div>
