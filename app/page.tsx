@@ -1,6 +1,4 @@
 'use client';
-
-import Image from 'next/image';
 import { createRoot } from 'react-dom/client';
 import {
   Card,
@@ -32,22 +30,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { set, useForm } from 'react-hook-form';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
@@ -57,8 +39,8 @@ import { toast } from '@/components/ui/use-toast';
 import { ChevronsUpDown, Check } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 import { MoveUp } from 'lucide-react';
-import { generateBoard, clearAnimations } from '@/lib/helper';
 import Typewriter from 'typewriter-effect';
+import useBoard from '@/hooks/useBoard';
 
 const algorithms = [
   { label: 'A*', value: 'astar' },
@@ -86,65 +68,26 @@ type state = {
 };
 
 export default function Home() {
-  const [size, setSize] = useState([20, 30]);
-  const [start, setStart] = useState([1, 1]);
-  const [end, setEnd] = useState([size[0] - 2, size[1] - 2]);
   const [algorithm, setAlgorithm] = useState('astar');
   const [disabled, setDisabled] = useState(false);
-
+  const {
+    board,
+    start,
+    end,
+    changeBoardSize,
+    generateRandomBoard,
+    clearAnimations,
+    clearBoard,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleClick,
+    size,
+    setSize,
+    onClickState,
+    setOnClickState,
+  } = useBoard();
   const [path, setPath] = useState([]);
-
-  function shuffleArray(array: any[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
-
-  const clearBoard = () => {
-    setPath([]);
-    setBoard((prev) => {
-      const newBoard = [...prev];
-      for (let i = 1; i < newBoard.length - 1; i++) {
-        for (let j = 1; j < newBoard[i].length - 1; j++) {
-          if (newBoard[i][j] === 1) {
-            newBoard[i][j] = 0;
-          }
-          const node = document.getElementById('node-' + i + '-' + j);
-          if (node) {
-            node.classList.remove('bg-purple-400');
-          }
-        }
-      }
-      return newBoard;
-    });
-  };
-
-  const generateRandomBoard = (m: number, n: number) => {
-    // generate random board with 0 for path and 1 for wall 2 for start and 3 for end, the edges are all walls
-    clearBoard();
-
-    setBoard((prev) => {
-      const newBoard = [...prev];
-      for (let i = 1; i < newBoard.length - 1; i++) {
-        for (let j = 1; j < newBoard[i].length - 1; j++) {
-          if (newBoard[i][j] === 2 || newBoard[i][j] === 3) continue;
-          const random = Math.random();
-          if (random < 0.3) {
-            newBoard[i][j] = 1;
-          }
-
-          const node = document.getElementById('node-' + i + '-' + j);
-          if (node) {
-            node.classList.remove('bg-purple-400');
-            createRoot(node).unmount();
-          }
-        }
-      }
-      return newBoard;
-    });
-  };
-  const [board, setBoard] = useState(generateBoard(size[0], size[1]));
 
   enum OnClickState {
     START = 'START',
@@ -160,7 +103,6 @@ export default function Home() {
     START = 2,
     END = 3,
   }
-  const [onClickState, setOnClickState] = useState<OnClickState>();
   const handleState = (state: OnClickState) => {
     if (state === onClickState) {
       setOnClickState(OnClickState.NULL);
@@ -170,125 +112,19 @@ export default function Home() {
     toast({
       title: 'You are changing: ' + state,
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-auto">
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4  overflow-x-scroll ">
           <code className="text-white">
             {`Click${
               state === OnClickState.ADD_WALL ||
               state === OnClickState.REMOVE_WALL
                 ? ' or drag'
                 : ''
-            } to change the ${state} location`}
+            } on the grid to change the ${state} location`}
           </code>
         </pre>
       ),
     });
     setOnClickState(state);
-  };
-
-  // const form = useForm<z.infer<typeof FormSchema>>({
-  // resolver: zodResolver(FormSchema),
-  // });
-  const [isDrawing, setIsDrawing] = useState(false);
-  const handleMouseDown = () => {
-    setIsDrawing(true);
-  };
-
-  const handleMouseUp = () => {
-    console.log('mouse up');
-    setIsDrawing(false);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent, row: number, col: number) => {
-    const node = document.getElementById('node-' + row + '-' + col);
-    if (!node) return;
-    if (!isDrawing) return;
-    clearAnimations();
-
-    switch (onClickState) {
-      case OnClickState.ADD_WALL:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (newBoard[row][col] === 0) {
-            newBoard[row][col] = 1;
-          }
-          return newBoard;
-        });
-        break;
-      case OnClickState.REMOVE_WALL:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (
-            row === 0 ||
-            col === 0 ||
-            row === newBoard.length - 1 ||
-            col === newBoard[0].length - 1
-          )
-            return newBoard;
-          if (newBoard[row][col] === 1) {
-            newBoard[row][col] = 0;
-          }
-          return newBoard;
-        });
-        break;
-    }
-  };
-  console.log('board', board);
-  console.log('start', start);
-  console.log('end', end);
-
-  const handleClick = (row: number, col: number) => {
-    const node = document.getElementById('node-' + row + '-' + col);
-    if (!node) return;
-    clearAnimations();
-    switch (onClickState) {
-      case OnClickState.ADD_WALL:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (newBoard[row][col] !== 0) return newBoard;
-          newBoard[row][col] = 1;
-          return newBoard;
-        });
-        break;
-
-      case OnClickState.REMOVE_WALL:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (
-            row === 0 ||
-            col === 0 ||
-            row === newBoard.length - 1 ||
-            col === newBoard[0].length - 1
-          )
-            return newBoard;
-          if (newBoard[row][col] !== 1) return newBoard;
-          newBoard[row][col] = 0;
-          return newBoard;
-        });
-        break;
-
-      case OnClickState.START:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (newBoard[row][col] !== 0) return newBoard;
-          newBoard[row][col] = 2;
-          newBoard[start[0]][start[1]] = 0;
-          setStart([row, col]);
-          return newBoard;
-        });
-
-        break;
-      case OnClickState.END:
-        setBoard((prev) => {
-          const newBoard = [...prev];
-          if (newBoard[row][col] !== 0) return newBoard;
-          newBoard[row][col] = 3;
-          newBoard[end[0]][end[1]] = 0;
-          setEnd([row, col]);
-          return newBoard;
-        });
-
-        break;
-    }
   };
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
@@ -378,8 +214,8 @@ export default function Home() {
             // move down
             createRoot(nodeElement).render(
               <MoveUp
-                size={10}
-                className="transform flex justify-center rotate-180"
+                size={15}
+                className="transform flex justify-center align-middle ease-in-out transition rotate-180"
               />
             );
           } else if (direction[0] < 0 && direction[1] === 0) {
@@ -387,52 +223,54 @@ export default function Home() {
 
             createRoot(nodeElement).render(
               <MoveUp
-                size={10}
-                className="transform flex justify-center rotate-0"
+                size={15}
+                className="transform flex justify-center align-middle rotate-0"
               />
             );
           } else if (direction[0] === 0 && direction[1] > 0) {
             // move right
             createRoot(nodeElement).render(
               <MoveUp
-                size={10}
-                className="transform flex justify-center rotate-90"
+                size={15}
+                className="transform flex justify-center align-middle rotate-90"
               />
             );
           } else if (direction[0] === 0 && direction[1] < 0) {
             // move left
             createRoot(nodeElement).render(
-              <MoveUp size={10} className="transform -rotate-90" />
+              <MoveUp size={15} className="transform -rotate-90" />
             );
           } else if (direction[0] > 0 && direction[1] > 0) {
             createRoot(nodeElement).render(
               <MoveUp
-                size={10}
-                className="transform flex justify-center rotate-135"
+                size={15}
+                className="transform flex justify-center align-middle rotate-135"
               />
             );
           } else if (direction[0] < 0 && direction[1] < 0) {
             createRoot(nodeElement).render(
               <MoveUp
-                size={10}
-                className="transform flex justify-center rotate-315"
+                size={15}
+                className="transform flex justify-center align-middle rotate-315"
               />
             );
           } else if (direction[0] < 0 && direction[1] < 0) {
             createRoot(nodeElement).render(
               <MoveUp
-                size={10}
-                className="transform flex justify-center rotate-225"
+                size={15}
+                className="transform flex justify-center align-middle rotate-225"
               />
             );
           } else if (direction[0] < 0 && direction[1] > 0) {
             createRoot(nodeElement).render(
               <MoveUp
-                size={10}
-                className="transform flex justify-center rotate-45"
+                size={15}
+                className="transform flex justify-center align-middle rotate-45"
               />
             );
           }
+          prevNodeElement.classList.remove('animate-pulse');
+          nodeElement.classList.add('animate-pulse');
 
           nodeElement.classList.add(stack[1]);
         }
@@ -563,11 +401,7 @@ export default function Home() {
                             variant={'secondary'}
                             size={'sm'}
                             className="col-span-2"
-                            onClick={() => {
-                              setBoard(generateBoard(size[0], size[1]));
-                              setEnd([size[0] - 2, size[1] - 2]);
-                              setStart([1, 1]);
-                            }}
+                            onClick={() => changeBoardSize()}
                             disabled={disabled}
                           >
                             <Check size={26} />
@@ -681,7 +515,11 @@ export default function Home() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-center gap-2">
-            <Button onClick={runAlgorithm} disabled={disabled}>
+            <Button
+              variant={'premium'}
+              onClick={runAlgorithm}
+              disabled={disabled}
+            >
               Visualize Path
             </Button>
           </CardFooter>
@@ -737,16 +575,13 @@ export default function Home() {
                   if (col === BOARDSTATE.WALL) {
                     bgColor = 'bg-black';
                   }
-                  let wall = '';
-                  if (col === BOARDSTATE.WALL) {
-                    wall = 'wall';
-                  }
+
                   //add
                   return (
                     <div
                       key={'node-' + i + '-' + j}
                       id={'node-' + i + '-' + j}
-                      className={cn('h-3 w-3 lg:h-4 lg:w-4', bgColor, wall)}
+                      className={cn('h-4 w-4', bgColor)}
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
                       onMouseMove={(e) => handleMouseMove(e, i, j)}
