@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from typing import Any, List, Optional
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Json
@@ -28,15 +28,23 @@ class AlgorithmModel(BaseModel):
 
 
 @app.get("/api/docs", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
-async def get_docs():
-    # Redirect to /docs (relative URL)
-    return RedirectResponse(url="/docs", status_code=302)
+async def get_docs(request: Request):
+    # Get the query parameter from the incoming request
+    query_param = request.query_params.get("_rsc")
+
+    # Redirect to /docs with the extracted query parameter
+    redirect_url = f"/docs?_rsc={query_param}" if query_param else "/docs"
+    return RedirectResponse(url=redirect_url, status_code=302)
 
 
 @app.get("/api/redoc", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
-async def get_redoc():
-    # Redirect to /redoc (relative URL)
-    return RedirectResponse(url="/redoc", status_code=302)
+async def get_redoc(request: Request):
+   # Get the query parameter from the incoming request
+    query_param = request.query_params.get("_rsc")
+
+    # Redirect to /redoc with the extracted query parameter
+    redirect_url = f"/redoc?_rsc={query_param}" if query_param else "/redoc"
+    return RedirectResponse(url=redirect_url, status_code=302)
 
 
 @app.get("/api/openai.json", description="Endpoint so openai.json can be downloaded from Swagger-UI.")

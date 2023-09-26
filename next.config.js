@@ -3,18 +3,18 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/docs/:path*', // /docs?rsc=1
+        source: '/docs', // /docs?rsc=1
         destination:
           process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:8000/docs/:path*'
-            : '/api/docs/:path*',
+            ? 'http://127.0.0.1:8000/docs'
+            : '/api/docs',
       },
       {
-        source: '/redoc/:path*',
+        source: '/redoc',
         destination:
           process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:8000/redoc/:path*'
-            : '/api/redoc/:path*',
+            ? 'http://127.0.0.1:8000/redoc'
+            : '/api/redoc',
       },
       {
         source: '/openapi.json',
