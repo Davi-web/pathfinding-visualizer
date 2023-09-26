@@ -5,7 +5,7 @@
   "scripts": {
     "fastapi-dev": "python3 -m uvicorn api.index:app --reload",
     "next-dev": "next dev",
-    "dev": "concurrently \"bun run fastapi-dev\" \"bun run next-dev\"",
+    "dev": "concurrently \"pnpm run fastapi-dev\" \"pnpm run next-dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
