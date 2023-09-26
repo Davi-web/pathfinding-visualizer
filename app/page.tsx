@@ -228,6 +228,7 @@ export default function Home() {
 
   useEffect(() => {
     tutorialModal.onOpen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
