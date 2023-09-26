@@ -5,15 +5,15 @@
   "scripts": {
     "fastapi-dev": "python3 -m uvicorn api.index:app --reload",
     "next-dev": "next dev",
-    "dev": "concurrently \"bun run fastapi-dev\" \"bun run next-dev\"",
+    "dev": "concurrently \"pnpm run fastapi-dev\" \"pnpm run next-dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": " python3 -m venv venv && . venv/bin/activate && pip3 install -r requirements.txt"
+    "postinstall": "[ -d 'venv' ] && . venv/bin/activate && pip3 install --upgrade pip && pip3 install -r requirements.txt || (python3 -m venv venv && . venv/bin/activate) && pip3 install --upgrade pip && pip3 install -r requirements.txt"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
-    "@radix-ui/react-dialog": "^1.0.4",
+    "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-popover": "^1.0.6",
     "@radix-ui/react-select": "^2.0.0",
