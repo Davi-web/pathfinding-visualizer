@@ -55,19 +55,18 @@ def algorithms(req: AlgorithmModel):
     board = req.board
     path = []
 
-    match algorithm:
-        case Algorithms.bfs:
-            print('Performing BFS Algorithm')
-            path = bfs(board, start)
-        case Algorithms.dijkstra:
-            print('Perfroming Dijkstra Algorithm')
-            path = dijkstra(board, start, end)
-        case Algorithms.astar:
-            print('Performing A* Algorithm')
-            path = astar(board, start, end)
-        case _:
-            print('Performing DFS Algorithm')
-            path = dfs(board, start)
+    if algorithm is Algorithms.bfs:
+        print('Performing BFS Algorithm')
+        path = bfs(board, start)
+    elif algorithm is Algorithms.dijkstra:
+        print('Perfroming Dijkstra Algorithm')
+        path = dijkstra(board, start, end)
+    elif algorithm is Algorithms.astar:
+        print('Performing A* Algorithm')
+        path = astar(board, start, end)
+    elif algorithm is Algorithms.dfs:
+        print('Performing DFS Algorithm')
+        path = dfs(board, start)
     return {
         'path': path,
         'valid': len(path) > 0
