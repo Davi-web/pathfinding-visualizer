@@ -3,30 +3,18 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/docs',
-        has: [
-          {
-            type: 'query',
-            key: 'rsc',
-          },
-        ],
+        source: '/docs/:path*', // /docs?rsc=1
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:8000/docs/:path*'
-            : '/api/docs',
+            : '/api/docs/:path*',
       },
       {
-        source: '/redoc',
-        has: [
-          {
-            type: 'query',
-            key: 'rsc',
-          },
-        ],
+        source: '/redoc/:path*',
         destination:
           process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:8000/redoc'
-            : '/api/redoc',
+            ? 'http://127.0.0.1:8000/redoc/:path*'
+            : '/api/redoc/:path*',
       },
       {
         source: '/openapi.json',
