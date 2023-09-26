@@ -3,14 +3,14 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/docs',
+        source: '/docs/:path*',
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:8000/docs'
             : '/api/docs',
       },
       {
-        source: '/redoc',
+        source: '/redoc/:path*',
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:8000/redoc'
