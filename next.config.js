@@ -4,6 +4,12 @@ const nextConfig = {
     return [
       {
         source: '/docs', // /docs?rsc=1
+        has: [
+          {
+            type: 'query',
+            key: '_rsc',
+          },
+        ],
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:8000/docs'
@@ -11,6 +17,12 @@ const nextConfig = {
       },
       {
         source: '/redoc',
+        has: [
+          {
+            type: 'query',
+            key: '_rsc',
+          },
+        ],
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:8000/redoc'
