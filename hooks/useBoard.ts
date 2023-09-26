@@ -36,6 +36,7 @@ const useBoard = () => {
     pathElements.forEach((element) => {
       element.classList.remove('bg-purple-400');
       element.classList.remove("animate-pulse")
+      element.classList.remove("text-yellow-200")
       createRoot(element).unmount();
     });
   };
