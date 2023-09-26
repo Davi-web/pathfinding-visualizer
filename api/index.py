@@ -28,24 +28,16 @@ class AlgorithmModel(BaseModel):
 
 
 @app.get("/api/docs", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
-async def get_docs(request: Request):
-    # Get the query parameter from the incoming request
-    query_param = request.query_params.get("_rsc")
-    print(query_param)
+async def get_docs():
 
     # Redirect to /docs with the extracted query parameter
-    redirect_url = f"/docs?_rsc={query_param}" if query_param else "/docs"
     return RedirectResponse(url="/docs", status_code=302)
 
 
 @app.get("/api/redoc", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
 async def get_redoc(request: Request):
-   # Get the query parameter from the incoming request
-    query_param = request.query_params.get("_rsc")
-    print(query_param)
 
     # Redirect to /redoc with the extracted query parameter
-    redirect_url = f"/redoc?_rsc={query_param}" if query_param else "/redoc"
     return RedirectResponse(url="/redoc", status_code=302)
 
 
