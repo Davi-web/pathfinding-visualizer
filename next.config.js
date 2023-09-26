@@ -8,7 +8,7 @@ const nextConfig = {
           {
             type: 'query',
             key: '_rsc',
-            value: 'docs',
+            value: '1ag7k',
           },
         ],
         destination:
@@ -22,7 +22,7 @@ const nextConfig = {
           {
             type: 'query',
             key: '_rsc',
-            value: 'redoc',
+            value: '1ag7k',
           },
         ],
         destination:
