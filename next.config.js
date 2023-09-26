@@ -8,6 +8,7 @@ const nextConfig = {
           {
             type: 'query',
             key: '_rsc',
+            value: '1ag7k',
           },
         ],
         destination:
@@ -16,11 +17,12 @@ const nextConfig = {
             : '/api/docs',
       },
       {
-        source: '/redoc',
+        source: '/redoc', // /redoc?rsc=1 or /redoc
         has: [
           {
             type: 'query',
             key: '_rsc',
+            value: '1ag7k',
           },
         ],
         destination:
