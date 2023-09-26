@@ -11,45 +11,25 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from './ui/badge';
-import {
-  MessageSquare,
-  Music,
-  ImageIcon,
-  VideoIcon,
-  Code,
-  Check,
-  Zap,
-  PersonStanding,
-} from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-enum STEPS {
-  INTRO = 0,
-  DESCRIPTION = 1,
-  WALLS = 2,
-  CHANGE_BOARD = 3,
-  ALGORITHMS = 4,
-  VISUALIZE_PATH = 5,
-}
+import { STEPS } from '@/lib/enums';
+import { algorithms } from '@/lib/algorithms';
 
 const TutorialModal = () => {
   const tutorialModal = useTutorialModal();
-  const [loading, setLoading] = useState<boolean>(false);
   const [step, setStep] = useState<STEPS>(STEPS.INTRO);
-  //   const handleClose = useCallback(() => {
-  //     if (disabled) {
-  //       return;
-  //     }
 
-  //     setShowModal(false);
-  //     setTimeout(() => {
-  //       onClose();
-  //     }, 300);
-  //   }, [onClose, disabled]);
   const onBack = () => {
     setStep((prev) => prev - 1);
   };
   const onNext = () => {
+    if (step === STEPS.TECH_STACK) {
+      setStep(0);
+      tutorialModal.onClose();
+      return;
+    }
     setStep((prev) => prev + 1);
   };
   let header = (
@@ -58,11 +38,11 @@ const TutorialModal = () => {
     </div>
   );
   let body = (
-    <div>
+    <p className="text-left">
       This is a pathfinding visualizer that allows you to find the path between
       the start and end node. Add walls or generate a random board to visualize
       the path
-    </div>
+    </p>
   );
   if (step === STEPS.DESCRIPTION) {
     header = (
@@ -72,58 +52,100 @@ const TutorialModal = () => {
     );
     body = (
       <>
-        <p className="flex flex-row">
-          The person just finished his business and is trying to get home
-          However, he realized that there are a lot of obstacles in his way
-          which makes it hard for him to get home. He needs your help to find
-          the shortest path to get home.
-        </p>
+        <ul className="list-disc list-inside">
+          <li className="text-left py-1">
+            Within this visualizer, users can seamlessly navigate the grid,
+            restricted to movements in the cardinal directions of up, down,
+            left, and right.
+          </li>
+          <li className="text-left py-1">
+            It empowers individuals to engage with diverse pathfinding
+            challenges, ranging from intricate maze-solving to route
+            optimization, all while deepening their comprehension of fundamental
+            graph traversal and search principles.
+          </li>
+          <li className="text-left py-1">
+            The visualizer offers versatile options, allowing you to customize
+            the grid size, introduce obstacles, modify start and end nodes, and
+            select different algorithms.
+          </li>
+        </ul>
       </>
     );
-  }
-  if (step === STEPS.WALLS) {
-    header = (
-      <div className="flex items-center gap-x-2 font-bold py-1">
-        Adding Walls
-      </div>
-    );
-    body = (
-      <>
-        <div>Click and drag on the board to add walls</div>
-        <div>Click on the dropdown to change the board</div>
-      </>
-    );
-  }
-  if (step === STEPS.CHANGE_BOARD) {
-    header = (
-      <div className="flex items-center gap-x-2 font-bold py-1">
-        Changing the board
-      </div>
-    );
-    body = <div>Click on the dropdown to change the board</div>;
   }
 
   if (step === STEPS.ALGORITHMS) {
     header = (
-      <div className="flex items-center gap-x-2 font-bold py-1">
-        Adding start and end nodes
-      </div>
+      <div className="flex items-center gap-x-2 font-bold py-1">Algorithms</div>
     );
-    body = <div>Click on the dropdown to change the board</div>;
+    //display info about algorithm based on selected algorithm
+    body = (
+      <>
+        <p className="flex text-left text-xs">
+          The following algorithms are supported:
+        </p>
+        <ul className="list-disc list-inside">
+          {algorithms.map((algorithm) => (
+            <li key={algorithm.value} className="text-left text-xs py-1">
+              <span className="font-bold text-blue-500">
+                {algorithm.label}:{' '}
+              </span>{' '}
+              {algorithm.description}
+            </li>
+          ))}
+        </ul>
+      </>
+    );
   }
-
-  if (step === STEPS.VISUALIZE_PATH) {
+  if (step === STEPS.VIDEO) {
     header = (
       <div className="flex items-center gap-x-2 font-bold py-1">
-        Visualizing the path
+        Watch the video to learn how to visualize the path
       </div>
     );
-    body = <div>Click on the dropdown to change the board</div>;
+    body = (
+      <div>
+        <video controls width="640" height="360">
+          <source src="/pathfinder.mov" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    );
+  }
+  if (step === STEPS.TECH_STACK) {
+    header = (
+      <div className="flex items-center gap-x-2 font-bold py-1">TECH STACK</div>
+    );
+    body = (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 cursor-pointer">
+        <Badge className="bg-blue-500 w-24 hover:text-blue-200">
+          <p className="flex flex-row justify-center text-center">React</p>
+        </Badge>
+        <Badge className="bg-red-500 text-center text-white w-24 hover:text-red-200">
+          Typescript
+        </Badge>
+        <Badge className="bg-cyan-500 text-center text-white hover:text-cyan-200 w-24">
+          <p className="flex justify-center">TailwindCSS</p>
+        </Badge>
+        <Badge className="bg-green-500 text-center text-white hover:text-green-200 w-24">
+          <p className="text-center flex">ShadCn/UI</p>
+        </Badge>
+        <Badge className="bg-emerald-500 text-center text-white hover:text-emerald-200 w-24">
+          NextJS
+        </Badge>
+        <Badge className="bg-pink-500 text-center text-white hover:text-pink-200 w-24">
+          FastAPI
+        </Badge>
+        <Badge className="bg-amber-500 text-center text-white hover:text-amber-200 w-24">
+          Python
+        </Badge>
+        <Badge className="bg-indigo-500 text-center text-white hover:text-indigo-200 w-24">
+          Swagger-UI
+        </Badge>
+      </div>
+    );
   }
 
-  useEffect(() => {
-    tutorialModal.onOpen();
-  }, []);
   return (
     <Dialog open={tutorialModal.isOpen} onOpenChange={tutorialModal.onClose}>
       <DialogContent>
@@ -133,20 +155,6 @@ const TutorialModal = () => {
           </DialogTitle>
           <DialogDescription className="text-center pt-2 space-y-2 text-zinc-900 font-medium">
             {body}
-            {/* {tools.map((tool) => (
-              <Card
-                key={tool.label}
-                className="p-3 border-black/5 flex items-center justify-between"
-              >
-                <div className="flex items-center gap-x-4">
-                  <div className={cn('p-2 w-fit rounded-md', tool.bgColor)}>
-                    <tool.icon className={cn(tool.color, 'w-6 h-6')} />
-                  </div>
-                  <div className="font-semibold text-sm">{tool.label}</div>
-                </div>
-                <Check className="text-primary w-5 h-5" />
-              </Card>
-            ))} */}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -168,13 +176,8 @@ const TutorialModal = () => {
               >
                 Back
               </Button>
-              <Button
-                variant="outline"
-                className="flex-grow"
-                onClick={onNext}
-                disabled={step === 4}
-              >
-                Next
+              <Button variant="outline" className="flex-grow" onClick={onNext}>
+                {step === STEPS.TECH_STACK ? 'Finish' : 'Next'}
               </Button>
             </div>
           </div>

@@ -1,13 +1,8 @@
+'use client'
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { OnClickState } from '@/lib/enums';
 
-enum OnClickState {
-  START = 'START',
-  REMOVE_WALL = 'REMOVE_WALL',
-  ADD_WALL = 'ADD_WALL',
-  END = 'END',
-  NULL = 'NULL',
-}
 
 const useBoard = () => {
   const [size, setSize] = useState([22, 22]);
@@ -40,6 +35,7 @@ const useBoard = () => {
     const pathElements = document.querySelectorAll('.bg-purple-400');
     pathElements.forEach((element) => {
       element.classList.remove('bg-purple-400');
+      element.classList.remove("animate-pulse")
       createRoot(element).unmount();
     });
   };
@@ -70,6 +66,7 @@ const useBoard = () => {
   const [board, setBoard] = useState(generateBoard(size[0], size[1]));
 
   const changeBoardSize = () => {
+    clearAnimations();
     setBoard(generateBoard(size[0], size[1]));
     setEnd([size[0] - 2, size[1] - 2]);
     setStart([1, 1]);
@@ -139,9 +136,9 @@ const useBoard = () => {
   const handleClick = (row: number, col: number) => {
     const node = document.getElementById('node-' + row + '-' + col);
     if (!node) return;
-    clearAnimations();
     switch (onClickState) {
       case OnClickState.ADD_WALL:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
@@ -150,6 +147,7 @@ const useBoard = () => {
         });
         break;
       case OnClickState.REMOVE_WALL:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (
@@ -166,6 +164,7 @@ const useBoard = () => {
         break;
 
       case OnClickState.START:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;
@@ -177,6 +176,7 @@ const useBoard = () => {
 
         break;
       case OnClickState.END:
+        clearAnimations();
         setBoard((prev) => {
           const newBoard = [...prev];
           if (newBoard[row][col] !== 0) return newBoard;

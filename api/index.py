@@ -3,6 +3,7 @@ from typing import Any, List, Optional
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Json
 from algorithms import dfs, bfs, dijkstra, astar
+from enum import Enum
 
 app = FastAPI(
     title="Pathfinding Visualizer",
@@ -12,9 +13,16 @@ app = FastAPI(
 )
 
 
+class Algorithms(str, Enum):
+    dfs = 'dfs'
+    bfs = 'bfs'
+    dijkstra = 'dijkstra'
+    astar = "astar"
+
+
 class AlgorithmModel(BaseModel):
     board: List[List[int]]
-    algorithm: str
+    algorithm: Algorithms
     start: List[int]
     end: List[int]
 
@@ -31,7 +39,7 @@ async def get_redoc():
     return RedirectResponse(url="/redoc", status_code=302)
 
 
-@app.get("/api/openai.json", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
+@app.get("/api/openai.json", description="Endpoint so openai.json can be downloaded from Swagger-UI.")
 async def openai():
     return RedirectResponse(url="/openai.json", status_code=302)
 
@@ -46,28 +54,20 @@ def algorithms(req: AlgorithmModel):
     start, end, algorithm = req.start, req.end, req.algorithm
     board = req.board
     path = []
-    if algorithm == 'bfs':
-        path = bfs(board, start)
-    elif algorithm == 'dfs':
-        path = dfs(board, start)
-    elif algorithm == 'dijkstra':
-        path = dijkstra(board, start, end)
-    elif algorithm == 'astar':
-        path = astar(board, start, end)
 
-    # match algorithm:
-    #     case 'bfs':
-    #         print('Performing BFS Algorithm')
-    #         path = bfs(board, start)
-    #     case 'dijkstra':
-    #         print('Perfroming Dijkstra Algorithm')
-    #         path = dijkstra(board, start, end)
-    #     case 'astar':
-    #         print('Performing A* Algorithm')
-    #         path = astar(board, start, end)
-    #     case _:
-    #         print('Performing DFS Algorithm')
-    #         path = dfs(board, start)
+    match algorithm:
+        case Algorithms.bfs:
+            print('Performing BFS Algorithm')
+            path = bfs(board, start)
+        case Algorithms.dijkstra:
+            print('Perfroming Dijkstra Algorithm')
+            path = dijkstra(board, start, end)
+        case Algorithms.astar:
+            print('Performing A* Algorithm')
+            path = astar(board, start, end)
+        case _:
+            print('Performing DFS Algorithm')
+            path = dfs(board, start)
     return {
         'path': path,
         'valid': len(path) > 0

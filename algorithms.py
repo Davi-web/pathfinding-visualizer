@@ -8,6 +8,7 @@ def dfs(board: List[List[int]], start: List[int]):
     stack.append((start[0], start[1]))
     visited = set((start[0], start[1]))
     neighbors = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
     path = []
 
     while stack:
@@ -19,9 +20,12 @@ def dfs(board: List[List[int]], start: List[int]):
 
         for nei in neighbors:
             newI, newJ = nei[0] + i, nei[1] + j
-            if 0 <= newI < len(board) and 0 <= newJ < len(board) and (newI, newJ) not in visited and board[newI][newJ] != 1:
+            # print("neighbors: [i]: ", newI, ", [j]: ",
+            #       newJ, ", [val]: ", board[newI][newJ])
+            if 0 <= newI < len(board) and 0 <= newJ < len(board[0]) and (newI, newJ) not in visited and board[newI][newJ] in [0, 3]:
                 stack.append((newI, newJ))
                 visited.add((i, j))
+
     return []
 
 
@@ -41,7 +45,7 @@ def bfs(board: List[List[int]], start: List[int]):
 
         for nei in neighbors:
             newI, newJ = nei[0] + i, nei[1] + j
-            if 0 <= newI < len(board) and 0 <= newJ < len(board) and (newI, newJ) not in visited and board[newI][newJ] != 1 and [newI, newJ] != start:
+            if 0 <= newI < len(board) and 0 <= newJ < len(board[0]) and (newI, newJ) not in visited and board[newI][newJ] in [0, 3]:
                 queue.append((newI, newJ))
                 visited.add((newI, newJ))
     return []

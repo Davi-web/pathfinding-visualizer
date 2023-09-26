@@ -22,6 +22,7 @@ import {
   Github,
   Database,
   FileJson,
+  Info,
 } from 'lucide-react';
 
 import {
@@ -41,31 +42,9 @@ import { Toaster } from '@/components/ui/toaster';
 import { MoveUp } from 'lucide-react';
 import Typewriter from 'typewriter-effect';
 import useBoard from '@/hooks/useBoard';
-
-const algorithms = [
-  { label: 'A*', value: 'astar' },
-  { label: 'Dijkstra', value: 'dijkstra' },
-  { label: 'DFS', value: 'dfs' },
-  { label: 'BFS', value: 'bfs' },
-] as const;
-
-const FormSchema = z.object({
-  algorithm: z.string({
-    required_error: 'Please select an algorithm.',
-  }),
-  start: z.array(z.number()).min(2),
-  end: z.array(z.number()).min(2),
-  board: z.array(z.array(z.number())),
-});
-
-type state = {
-  row: number;
-  col: number;
-  isStart: boolean;
-  isclicked: boolean;
-  isWall: boolean;
-  isEnd: boolean;
-};
+import { BOARDSTATE, OnClickState } from '@/lib/enums';
+import useTutorialModal from '@/hooks/useTutorialModal';
+import { algorithms } from '@/lib/algorithms';
 
 export default function Home() {
   const [algorithm, setAlgorithm] = useState('astar');
@@ -87,22 +66,9 @@ export default function Home() {
     onClickState,
     setOnClickState,
   } = useBoard();
-  const [path, setPath] = useState([]);
+  const [path, setPath] = useState([]); // the path that we will animate
+  const tutorialModal = useTutorialModal();
 
-  enum OnClickState {
-    START = 'START',
-    REMOVE_WALL = 'REMOVE_WALL',
-    ADD_WALL = 'ADD_WALL',
-    END = 'END',
-    NULL = 'NULL',
-  }
-
-  enum BOARDSTATE {
-    EMPTY = 0,
-    WALL = 1,
-    START = 2,
-    END = 3,
-  }
   const handleState = (state: OnClickState) => {
     if (state === onClickState) {
       setOnClickState(OnClickState.NULL);
@@ -125,17 +91,6 @@ export default function Home() {
       ),
     });
     setOnClickState(state);
-  };
-
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
   };
 
   const runAlgorithm = () => {
@@ -202,20 +157,41 @@ export default function Home() {
         const nodeElement = document.getElementById(
           'node-' + node[0] + '-' + node[1]
         );
-        const prevNode = path[i - 1];
-        const prevNodeElement = document.getElementById(
-          'node-' + prevNode[0] + '-' + prevNode[1]
-        );
-        let direction = [0, 0];
 
-        if (nodeElement && prevNodeElement) {
+        const prevNode = path[i - 1];
+        let direction = [0, 0];
+        nodeElement?.classList.add('animate-pulse');
+        nodeElement?.classList.add(stack[1]);
+        if (i === path.length - 2) {
+          setDisabled(false);
+        }
+        if (nodeElement) {
           direction = [node[0] - prevNode[0], node[1] - prevNode[1]];
+          //we will need to find the direction for dfs and bfs as we can not get the direction from the previous, node
+          // we will have to go back in our path to find the previous nodes where the abs(x) + abs(y) === 1
+          if (algorithm === 'dfs' || algorithm === 'bfs') {
+            for (let j = i - 1; j >= 0; j--) {
+              const prevNode = path[j];
+              const prevDirection = [
+                node[0] - prevNode[0],
+                node[1] - prevNode[1],
+              ];
+              if (
+                Math.abs(prevDirection[0]) + Math.abs(prevDirection[1]) ===
+                1
+              ) {
+                direction = prevDirection;
+                break;
+              }
+            }
+          }
+
           if (direction[0] > 0 && direction[1] === 0) {
             // move down
             createRoot(nodeElement).render(
               <MoveUp
                 size={15}
-                className="transform flex justify-center align-middle ease-in-out transition rotate-180"
+                className="transform flex justify-center align-middle ease-in-out transition rotate-180 text-yellow-200 "
               />
             );
           } else if (direction[0] < 0 && direction[1] === 0) {
@@ -224,7 +200,7 @@ export default function Home() {
             createRoot(nodeElement).render(
               <MoveUp
                 size={15}
-                className="transform flex justify-center align-middle rotate-0"
+                className="transform flex justify-center align-middle rotate-0  text-yellow-200"
               />
             );
           } else if (direction[0] === 0 && direction[1] > 0) {
@@ -232,54 +208,27 @@ export default function Home() {
             createRoot(nodeElement).render(
               <MoveUp
                 size={15}
-                className="transform flex justify-center align-middle rotate-90"
+                className="transform flex justify-center align-middle rotate-90 text-yellow-200"
               />
             );
           } else if (direction[0] === 0 && direction[1] < 0) {
             // move left
             createRoot(nodeElement).render(
-              <MoveUp size={15} className="transform -rotate-90" />
-            );
-          } else if (direction[0] > 0 && direction[1] > 0) {
-            createRoot(nodeElement).render(
               <MoveUp
                 size={15}
-                className="transform flex justify-center align-middle rotate-135"
-              />
-            );
-          } else if (direction[0] < 0 && direction[1] < 0) {
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle rotate-315"
-              />
-            );
-          } else if (direction[0] < 0 && direction[1] < 0) {
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle rotate-225"
-              />
-            );
-          } else if (direction[0] < 0 && direction[1] > 0) {
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle rotate-45"
+                className="transform -rotate-90 text-yellow-200"
               />
             );
           }
-          prevNodeElement.classList.remove('animate-pulse');
-          nodeElement.classList.add('animate-pulse');
-
-          nodeElement.classList.add(stack[1]);
-        }
-        if (i === path.length - 2) {
-          setDisabled(false);
         }
       }, 20 * i);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
+
+  useEffect(() => {
+    tutorialModal.onOpen();
+  }, []);
 
   return (
     <main className="flex flex-col min-h-screen justify-start w-full">
@@ -295,6 +244,11 @@ export default function Home() {
                 }}
               />
               <div className="flex justify-center">
+                <Info
+                  size={20}
+                  onClick={() => tutorialModal.onOpen()}
+                  className="hover:cursor-pointer"
+                />
                 <Link href={'/docs'}>
                   <Database size={20} />
                 </Link>
@@ -432,51 +386,22 @@ export default function Home() {
                   <PopoverContent className="w-80">
                     <div className="grid gap-4">
                       <div className="grid gap-2">
-                        <div className="grid grid-cols-3 items-center gap-4">
-                          <Label htmlFor="bfsCheck">BFS</Label>
-                          <Input
-                            id="bfsCheck"
-                            name="algorithm"
-                            type="radio"
-                            className="col-span-2 h-8"
-                            checked={algorithm === 'bfs'}
-                            onChange={() => setAlgorithm('bfs')}
-                          />
-                        </div>
-                        <div className="grid grid-cols-3 items-center gap-4">
-                          <Label htmlFor="dfsCheck">DFS</Label>
-                          <Input
-                            id="dfsCheck"
-                            name="algorithm"
-                            type="radio"
-                            value={algorithm}
-                            onChange={() => setAlgorithm('dfs')}
-                            checked={algorithm === 'dfs'}
-                            className="col-span-2 h-8"
-                          />
-                        </div>
-                        <div className="grid grid-cols-3 items-center gap-4">
-                          <Label htmlFor="dijkstra">Dijkstra</Label>
-                          <Input
-                            id="dijkstra"
-                            name="algorithm"
-                            onChange={() => setAlgorithm('dijkstra')}
-                            checked={algorithm === 'dijkstra'}
-                            type="radio"
-                            className="col-span-2 h-8"
-                          />
-                        </div>
-                        <div className="grid grid-cols-3 items-center gap-4">
-                          <Label htmlFor="astarButton">A*</Label>
-                          <Input
-                            id="astarButton"
-                            name="algorithm"
-                            onChange={() => setAlgorithm('astar')}
-                            checked={algorithm === 'astar'}
-                            type="radio"
-                            className="col-span-2 h-8"
-                          />
-                        </div>
+                        {algorithms.map((algo) => (
+                          <div
+                            className="grid grid-cols-3 items-center gap-4"
+                            key={algo.value}
+                          >
+                            <Label htmlFor={algo.value}>{algo.label}</Label>
+                            <Input
+                              id={algo.value}
+                              name="algorithm"
+                              type="radio"
+                              className="col-span-2 h-8"
+                              checked={algorithm === algo.value}
+                              onChange={() => setAlgorithm(algo.value)}
+                            />
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </PopoverContent>
