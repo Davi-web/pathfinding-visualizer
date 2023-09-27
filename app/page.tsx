@@ -250,13 +250,14 @@ export default function Home() {
                   onClick={() => tutorialModal.onOpen()}
                   className="hover:cursor-pointer"
                 />
-                <Link href={'/docs'}>
+                <Link href={'/docs'} target="_blank">
                   <Database size={20} />
                 </Link>
-                <Link href={'/redoc'}>
+                <Link href={'/redoc'} target="_blank">
                   <FileJson size={20} />
                 </Link>
                 <Link
+                  target="_blank"
                   href={'https://github.com/Davi-web/pathfinding-visualizer'}
                 >
                   <Github size={20} />

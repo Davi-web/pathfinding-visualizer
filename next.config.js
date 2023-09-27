@@ -28,7 +28,7 @@ const nextConfig = {
             : '/api/redoc',
       },
       {
-        source: '/docs',
+        source: '/redoc',
         has: [
           {
             type: 'query',
@@ -36,7 +36,7 @@ const nextConfig = {
             value: '1ag7k',
           },
         ],
-        destination: '/api/docs',
+        destination: '/api/redoc',
       },
       {
         source: '/openapi.json',
