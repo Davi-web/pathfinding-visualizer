@@ -40,41 +40,32 @@ const nextConfig = {
         {
           source: '/docs',
           // destination: '/api/docs',
+          has: [
+            {
+              type: 'query',
+              key: 'rsc',
+              value: '1ag7k',
+            },
+          ],
           destination:
             process.env.NODE_ENV === 'development'
               ? 'http://127.0.0.1:8000/docs'
               : '/api/docs',
         },
         {
-          source: '/docs/:path*',
-          // destination: '/api/docs',
-          destination:
-            process.env.NODE_ENV === 'development'
-              ? 'http://127.0.0.1:8000/docs/:path*'
-              : '/api/docs/:path*',
-        },
-        {
           source: '/redoc',
           // destination: '/api/redoc',
+          has: [
+            {
+              type: 'query',
+              key: 'rsc',
+              value: '1ag7k',
+            },
+          ],
           destination:
             process.env.NODE_ENV === 'development'
               ? 'http://127.0.0.1:8000/redoc'
               : '/api/redoc',
-        },
-        {
-          source: '/redoc/:path*',
-          // destination: '/api/redoc',
-          destination:
-            process.env.NODE_ENV === 'development'
-              ? 'http://127.0.0.1:8000/redoc/:path*'
-              : '/api/redoc/:path*',
-        },
-        {
-          source: '/openapi.json',
-          destination:
-            process.env.NODE_ENV === 'development'
-              ? 'http://127.0.0.1:8000/openapi.json'
-              : '/api/openapi.json',
         },
       ],
     };
