@@ -44,7 +44,6 @@ const nextConfig = {
             {
               type: 'query',
               key: '_rsc',
-              value: '1ag7k',
             },
           ],
           destination:
@@ -59,7 +58,6 @@ const nextConfig = {
             {
               type: 'query',
               key: '_rsc',
-              value: '1ag7k',
             },
           ],
           destination:
