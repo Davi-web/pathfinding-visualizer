@@ -46,12 +46,28 @@ const nextConfig = {
               : '/api/docs',
         },
         {
+          source: '/docs/:path*',
+          // destination: '/api/docs',
+          destination:
+            process.env.NODE_ENV === 'development'
+              ? 'http://127.0.0.1:8000/docs/:path*'
+              : '/api/docs/:path*',
+        },
+        {
           source: '/redoc',
           // destination: '/api/redoc',
           destination:
             process.env.NODE_ENV === 'development'
               ? 'http://127.0.0.1:8000/redoc'
               : '/api/redoc',
+        },
+        {
+          source: '/redoc/:path*',
+          // destination: '/api/redoc',
+          destination:
+            process.env.NODE_ENV === 'development'
+              ? 'http://127.0.0.1:8000/redoc/:path*'
+              : '/api/redoc/:path*',
         },
         {
           source: '/openapi.json',
