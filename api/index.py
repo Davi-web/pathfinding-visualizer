@@ -30,8 +30,8 @@ class AlgorithmModel(BaseModel):
     end: List[int]
 
 
-@app.get('/api/python', description="Endpoint to check that server is running!")
-def hello_world():
+@app.get('/api/health', description="Endpoint to check that server is running!")
+def health_check():
     return {'message': 'Hello World'}
 
 
