@@ -23,7 +23,7 @@ const nextConfig = {
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:8000/openapi.json'
-            : '/openapi.json',
+            : '/api/openapi.json',
       },
       {
         source: '/api/:path*',
