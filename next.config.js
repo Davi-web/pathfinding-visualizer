@@ -10,11 +10,33 @@ const nextConfig = {
             : '/api/docs',
       },
       {
+        source: '/docs',
+        has: [
+          {
+            type: 'query',
+            key: '_rsc',
+            value: '1ag7k',
+          },
+        ],
+        destination: '/api/docs',
+      },
+      {
         source: '/redoc',
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:8000/redoc'
             : '/api/redoc',
+      },
+      {
+        source: '/docs',
+        has: [
+          {
+            type: 'query',
+            key: '_rsc',
+            value: '1ag7k',
+          },
+        ],
+        destination: '/api/docs',
       },
       {
         source: '/openapi.json',
