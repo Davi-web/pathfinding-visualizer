@@ -10,6 +10,9 @@ app = FastAPI(
     summary="Craft visualized pathways on an m x n board using custom walls for algorithmic exploration.",
     description="We were able to create the algorithms to solve the maze using python and FastAPI.",
     version="0.0.1",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openai.json"
 )
 
 
@@ -25,25 +28,6 @@ class AlgorithmModel(BaseModel):
     algorithm: Algorithms
     start: List[int]
     end: List[int]
-
-
-@app.get("/api/docs", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
-async def get_docs():
-
-    # Redirect to /docs with the extracted query parameter
-    return RedirectResponse(url="/docs", status_code=302)
-
-
-@app.get("/api/redoc", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
-async def get_redoc(request: Request):
-
-    # Redirect to /redoc with the extracted query parameter
-    return RedirectResponse(url="/redoc", status_code=302)
-
-
-@app.get("/api/openai.json", description="Endpoint so openai.json can be downloaded from Swagger-UI.")
-async def openai():
-    return RedirectResponse(url="/openai.json", status_code=302)
 
 
 @app.get('/api/python', description="Endpoint to check that server is running!")
