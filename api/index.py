@@ -31,14 +31,14 @@ class AlgorithmModel(BaseModel):
 async def get_docs():
 
     # Redirect to /docs with the extracted query parameter
-    return RedirectResponse(url="http://localhost:8000/docs", status_code=302)
+    return RedirectResponse(url="/docs", status_code=302)
 
 
 @app.get("/api/redoc", description="Endpoint so that Swagger-UI docs are compliant with NextJS and Vercel.")
 async def get_redoc(request: Request):
 
     # Redirect to /redoc with the extracted query parameter
-    return RedirectResponse(url="http://localhost:8000/redoc", status_code=302)
+    return RedirectResponse(url="/redoc", status_code=302)
 
 
 @app.get("/api/openai.json", description="Endpoint so openai.json can be downloaded from Swagger-UI.")
