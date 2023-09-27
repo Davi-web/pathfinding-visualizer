@@ -43,7 +43,7 @@ const nextConfig = {
           has: [
             {
               type: 'query',
-              key: 'rsc',
+              key: '_rsc',
               value: '1ag7k',
             },
           ],
@@ -58,7 +58,7 @@ const nextConfig = {
           has: [
             {
               type: 'query',
-              key: 'rsc',
+              key: '_rsc',
               value: '1ag7k',
             },
           ],
