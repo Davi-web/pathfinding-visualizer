@@ -250,10 +250,10 @@ export default function Home() {
                   onClick={() => tutorialModal.onOpen()}
                   className="hover:cursor-pointer"
                 />
-                <Link href={'/docs'} target="_blank">
+                <Link href={'/api/docs'} target="_blank">
                   <Database size={20} />
                 </Link>
-                <Link href={'/redoc'} target="_blank">
+                <Link href={'/api/redoc'} target="_blank">
                   <FileJson size={20} />
                 </Link>
                 <Link
