@@ -61,6 +61,9 @@ const useBoard = () => {
           }
         }
       }
+      for(let i = 0; i < newBoard.length; ++i) {
+        console.log(newBoard[i])
+      }
       return newBoard;
     });
   };
