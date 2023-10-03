@@ -1,8 +1,7 @@
-'use client'
-import { useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { OnClickState } from '@/lib/enums';
-
+"use client";
+import { useState } from "react";
+import { createRoot } from "react-dom/client";
+import { OnClickState } from "@/lib/enums";
 
 const useBoard = () => {
   const [size, setSize] = useState([22, 22]);
@@ -32,11 +31,11 @@ const useBoard = () => {
     return board;
   };
   const clearAnimations = () => {
-    const pathElements = document.querySelectorAll('.bg-purple-400');
+    const pathElements = document.querySelectorAll(".bg-purple-400");
     pathElements.forEach((element) => {
-      element.classList.remove('bg-purple-400');
-      element.classList.remove("animate-pulse")
-      element.classList.remove("text-yellow-200")
+      element.classList.remove("bg-purple-400");
+      element.classList.remove("animate-pulse");
+      element.classList.remove("text-yellow-200");
       createRoot(element).unmount();
     });
   };
@@ -54,9 +53,9 @@ const useBoard = () => {
             newBoard[i][j] = 1;
           }
 
-          const node = document.getElementById('node-' + i + '-' + j);
+          const node = document.getElementById("node-" + i + "-" + j);
           if (node) {
-            node.classList.remove('bg-purple-400');
+            node.classList.remove("bg-purple-400");
             createRoot(node).unmount();
           }
         }
@@ -82,21 +81,21 @@ const useBoard = () => {
           if (newBoard[i][j] === 1) {
             newBoard[i][j] = 0;
           }
-          const node = document.getElementById('node-' + i + '-' + j);
+          const node = document.getElementById("node-" + i + "-" + j);
           if (node) {
-            node.classList.remove('bg-purple-400');
+            node.classList.remove("bg-purple-400");
           }
         }
       }
       return newBoard;
     });
   };
-  const handleMouseDown = () => setIsDrawing(true)
+  const handleMouseDown = () => setIsDrawing(true);
 
-  const handleMouseUp = () => setIsDrawing(false)
+  const handleMouseUp = () => setIsDrawing(false);
 
   const handleMouseMove = (e: React.MouseEvent, row: number, col: number) => {
-    const node = document.getElementById('node-' + row + '-' + col);
+    const node = document.getElementById("node-" + row + "-" + col);
     if (!node) return;
     if (!isDrawing) return;
     clearAnimations();
@@ -130,7 +129,7 @@ const useBoard = () => {
   };
 
   const handleClick = (row: number, col: number) => {
-    const node = document.getElementById('node-' + row + '-' + col);
+    const node = document.getElementById("node-" + row + "-" + col);
     if (!node) return;
     switch (onClickState) {
       case OnClickState.ADD_WALL:
@@ -201,7 +200,7 @@ const useBoard = () => {
     size,
     setSize,
     onClickState,
-    setOnClickState
+    setOnClickState,
   };
 };
 

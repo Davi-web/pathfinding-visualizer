@@ -3,12 +3,11 @@
 
 name: Testing UI
 
-
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -16,7 +15,7 @@ permissions:
 jobs:
   e2e_testing_w_node:
     runs-on: ubuntu-latest
-    strategy: 
+    strategy:
       matrix:
         node-version: [16, 18]
 
@@ -33,5 +32,7 @@ jobs:
       - run: pnpm install --no-frozen-lockfile
       - name: Run ESLint
         run: pnpm eslint . --ext .js,.jsx,.ts,.tsx
+      - name: Format Code
+        run: pnpm format
       - name: "Cypress Run"
         uses: cypress-io/github-action@v6
