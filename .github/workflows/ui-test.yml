@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  testing_on_node:
+  e2e_testing_w_node:
     runs-on: ubuntu-latest
     strategy: 
       matrix:
