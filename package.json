@@ -13,7 +13,7 @@
     "test-python": "pytest",
     "test-ui": "cypress run -- --spec --record",
     "cypress:open": "cypress open",
-    "format": "pnpm exec prettier . --write"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
