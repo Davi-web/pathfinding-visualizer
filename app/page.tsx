@@ -1,5 +1,5 @@
-'use client';
-import { createRoot } from 'react-dom/client';
+"use client";
+import { createRoot } from "react-dom/client";
 import {
   Card,
   CardContent,
@@ -7,15 +7,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
-import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-import { Label } from '@/components/ui/label';
-import axios from 'axios';
+import { Label } from "@/components/ui/label";
+import axios from "axios";
 import {
   PersonStanding,
   DoorOpen,
@@ -23,31 +23,31 @@ import {
   Database,
   FileJson,
   Info,
-} from 'lucide-react';
+} from "lucide-react";
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { set, useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
+} from "@/components/ui/popover";
+import { set, useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 
-import { toast } from '@/components/ui/use-toast';
+import { toast } from "@/components/ui/use-toast";
 
-import { ChevronsUpDown, Check } from 'lucide-react';
-import { Toaster } from '@/components/ui/toaster';
-import { MoveUp } from 'lucide-react';
-import Typewriter from 'typewriter-effect';
-import useBoard from '@/hooks/useBoard';
-import { BOARDSTATE, OnClickState } from '@/lib/enums';
-import useTutorialModal from '@/hooks/useTutorialModal';
-import { algorithms } from '@/lib/algorithms';
+import { ChevronsUpDown, Check } from "lucide-react";
+import { Toaster } from "@/components/ui/toaster";
+import { MoveUp } from "lucide-react";
+import Typewriter from "typewriter-effect";
+import useBoard from "@/hooks/useBoard";
+import { BOARDSTATE, OnClickState } from "@/lib/enums";
+import useTutorialModal from "@/hooks/useTutorialModal";
+import { algorithms } from "@/lib/algorithms";
 
 export default function Home() {
-  const [algorithm, setAlgorithm] = useState('astar');
+  const [algorithm, setAlgorithm] = useState("astar");
   const [disabled, setDisabled] = useState(false);
   const {
     board,
@@ -76,15 +76,15 @@ export default function Home() {
     }
 
     toast({
-      title: 'You are changing: ' + state,
+      title: "You are changing: " + state,
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4  overflow-x-scroll ">
           <code className="text-white">
             {`Click${
               state === OnClickState.ADD_WALL ||
               state === OnClickState.REMOVE_WALL
-                ? ' or drag'
-                : ''
+                ? " or drag"
+                : ""
             } on the grid to change the ${state} location`}
           </code>
         </pre>
@@ -94,37 +94,24 @@ export default function Home() {
   };
 
   const runAlgorithm = () => {
-    console.log('Running algorithm', algorithm);
+    console.log("Running algorithm", algorithm);
     setDisabled(true);
 
     axios
-      .post('/api/algorithms', {
+      .post("/api/algorithms", {
         start: start,
         algorithm: algorithm,
         end: end,
 
-
-
-
-
-
-
-        
         board: board,
       })
-
-
-
-
-
-
 
       .then((res) => {
         setPath(res.data.path);
 
         if (!res.data.valid) {
           toast({
-            title: 'No Path Found',
+            title: "No Path Found",
             description: (
               <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-auto">
                 <code className="text-white">{JSON.stringify(res.data)}</code>
@@ -135,7 +122,7 @@ export default function Home() {
         }
 
         toast({
-          title: 'We Found a Path!',
+          title: "We Found a Path!",
           description: (
             <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-auto">
               <code className="text-white">{JSON.stringify(res.data)}</code>
@@ -143,16 +130,6 @@ export default function Home() {
           ),
         });
       })
-
-
-
-
-
-
-
-
-
-
 
       .catch((err) => {
         console.log(err);
@@ -171,22 +148,22 @@ export default function Home() {
     //ignore the first and last node
     // we will also inform the direction of the path
     const stack = [
-      'bg-yellow-400',
-      'bg-purple-400',
-      'bg-green-400',
-      'bg-rose-400',
+      "bg-yellow-400",
+      "bg-purple-400",
+      "bg-green-400",
+      "bg-rose-400",
     ];
     for (let i = 1; i < path.length - 1; i++) {
       setTimeout(() => {
         const node = path[i];
 
         const nodeElement = document.getElementById(
-          'node-' + node[0] + '-' + node[1]
+          "node-" + node[0] + "-" + node[1],
         );
 
         const prevNode = path[i - 1];
         let direction = [0, 0];
-        nodeElement?.classList.add('animate-pulse');
+        nodeElement?.classList.add("animate-pulse");
         nodeElement?.classList.add(stack[1]);
         if (i === path.length - 2) {
           setDisabled(false);
@@ -195,7 +172,7 @@ export default function Home() {
           direction = [node[0] - prevNode[0], node[1] - prevNode[1]];
           //we will need to find the direction for dfs and bfs as we can not get the direction from the previous, node
           // we will have to go back in our path to find the previous nodes where the abs(x) + abs(y) === 1
-          if (algorithm === 'dfs' || algorithm === 'bfs') {
+          if (algorithm === "dfs" || algorithm === "bfs") {
             for (let j = i - 1; j >= 0; j--) {
               const prevNode = path[j];
               const prevDirection = [
@@ -218,7 +195,7 @@ export default function Home() {
               <MoveUp
                 size={15}
                 className="transform flex justify-center align-middle ease-in-out transition rotate-180 text-yellow-200 "
-              />
+              />,
             );
           } else if (direction[0] < 0 && direction[1] === 0) {
             //move up
@@ -227,7 +204,7 @@ export default function Home() {
               <MoveUp
                 size={15}
                 className="transform flex justify-center align-middle rotate-0  text-yellow-200"
-              />
+              />,
             );
           } else if (direction[0] === 0 && direction[1] > 0) {
             // move right
@@ -235,7 +212,7 @@ export default function Home() {
               <MoveUp
                 size={15}
                 className="transform flex justify-center align-middle rotate-90 text-yellow-200"
-              />
+              />,
             );
           } else if (direction[0] === 0 && direction[1] < 0) {
             // move left
@@ -243,7 +220,7 @@ export default function Home() {
               <MoveUp
                 size={15}
                 className="transform -rotate-90 text-yellow-200"
-              />
+              />,
             );
           }
         }
@@ -265,7 +242,7 @@ export default function Home() {
             <CardTitle className="text-center">
               <Typewriter
                 options={{
-                  strings: ['Node Path Visualizer', 'by David Ha'],
+                  strings: ["Node Path Visualizer", "by David Ha"],
                   autoStart: true,
                   loop: true,
                 }}
@@ -276,15 +253,15 @@ export default function Home() {
                   onClick={() => tutorialModal.onOpen()}
                   className="hover:cursor-pointer"
                 />
-                <Link href={'/api/docs'} target="_blank">
+                <Link href={"/api/docs"} target="_blank">
                   <Database size={20} />
                 </Link>
-                <Link href={'/api/redoc'} target="_blank">
+                <Link href={"/api/redoc"} target="_blank">
                   <FileJson size={20} />
                 </Link>
                 <Link
                   target="_blank"
-                  href={'https://github.com/Davi-web/pathfinding-visualizer'}
+                  href={"https://github.com/Davi-web/pathfinding-visualizer"}
                 >
                   <Github size={20} />
                 </Link>
@@ -311,7 +288,7 @@ export default function Home() {
                   disabled={disabled}
                   className={cn(
                     onClickState === OnClickState.START &&
-                      'bg-red-500 hover:bg-red-400'
+                      "bg-red-500 hover:bg-red-400",
                   )}
                 >
                   Start
@@ -322,7 +299,7 @@ export default function Home() {
                   onClick={() => handleState(OnClickState.END)}
                   className={cn(
                     onClickState === OnClickState.END &&
-                      ' bg-blue-500 hover:bg-blue-400'
+                      " bg-blue-500 hover:bg-blue-400",
                   )}
                   disabled={disabled}
                 >
@@ -380,8 +357,8 @@ export default function Home() {
                             className="col-span-2 h-8"
                           />
                           <Button
-                            variant={'secondary'}
-                            size={'sm'}
+                            variant={"secondary"}
+                            size={"sm"}
                             className="col-span-2"
                             onClick={() => changeBoardSize()}
                             disabled={disabled}
@@ -446,7 +423,7 @@ export default function Home() {
                   onClick={() => handleState(OnClickState.ADD_WALL)}
                   className={cn(
                     onClickState === OnClickState.ADD_WALL &&
-                      ' bg-red-500 hover:bg-red-400'
+                      " bg-red-500 hover:bg-red-400",
                   )}
                   disabled={disabled}
                 >
@@ -458,7 +435,7 @@ export default function Home() {
                   onClick={() => handleState(OnClickState.REMOVE_WALL)}
                   className={cn(
                     onClickState === OnClickState.REMOVE_WALL &&
-                      ' bg-red-500 hover:bg-red-400'
+                      " bg-red-500 hover:bg-red-400",
                   )}
                   disabled={disabled}
                 >
@@ -469,7 +446,7 @@ export default function Home() {
           </CardContent>
           <CardFooter className="flex justify-center gap-2">
             <Button
-              variant={'premium'}
+              variant={"premium"}
               onClick={runAlgorithm}
               disabled={disabled}
             >
@@ -513,28 +490,28 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div className={cn(' rounded-lg flex flex-col justify-center')}>
+        <div className={cn(" rounded-lg flex flex-col justify-center")}>
           {board.map((row, i) => {
             return (
               <div className="flex justify-center" key={i}>
                 {row.map((col, j) => {
-                  let bgColor = 'bg-green-200';
+                  let bgColor = "bg-green-200";
                   if (col === BOARDSTATE.START) {
-                    bgColor = 'bg-red-500';
+                    bgColor = "bg-red-500";
                   }
                   if (col === BOARDSTATE.END) {
-                    bgColor = 'bg-blue-500';
+                    bgColor = "bg-blue-500";
                   }
                   if (col === BOARDSTATE.WALL) {
-                    bgColor = 'bg-black';
+                    bgColor = "bg-black";
                   }
 
                   //add
                   return (
                     <div
-                      key={'node-' + i + '-' + j}
-                      id={'node-' + i + '-' + j}
-                      className={cn('h-4 w-4', bgColor)}
+                      key={"node-" + i + "-" + j}
+                      id={"node-" + i + "-" + j}
+                      className={cn("h-4 w-4", bgColor)}
                       onMouseDown={handleMouseDown}
                       onMouseUp={handleMouseUp}
                       onMouseMove={(e) => handleMouseMove(e, i, j)}
