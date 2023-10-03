@@ -102,8 +102,23 @@ export default function Home() {
         start: start,
         algorithm: algorithm,
         end: end,
+
+
+
+
+
+
+
+        
         board: board,
       })
+
+
+
+
+
+
+
       .then((res) => {
         setPath(res.data.path);
 
@@ -137,7 +152,7 @@ export default function Home() {
 
 
 
-      
+
 
       .catch((err) => {
         console.log(err);
