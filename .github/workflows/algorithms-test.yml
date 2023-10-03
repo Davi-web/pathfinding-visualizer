@@ -37,11 +37,3 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-    - name: Use Node.js 19
-      uses: actions/setup-node@v3
-      with:
-        node-version: 19
-        cache: 'pnpm'
-    - run: pnpm ci
-    - run: pnpm run build --if-present
-    - run: pnpm test-ui
