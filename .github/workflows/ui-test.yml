@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  install:
+  Cypress Test on Node:
     runs-on: ubuntu-latest
     strategy: 
       matrix:
