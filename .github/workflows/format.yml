@@ -18,6 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{github.head_ref}}
       - uses: pnpm/action-setup@v2
         with:
           version: 8
