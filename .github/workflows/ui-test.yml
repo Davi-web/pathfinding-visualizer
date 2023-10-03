@@ -14,20 +14,22 @@ permissions:
   contents: read
 
 jobs:
-  install:
+  build:
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v2
-      with:
-        version: 8
-    - name: Use Node.js 
+    - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
-    - name: Installing dependencies
-      run: pnpm install 
-    - name: Running tests
-      run: pnpm run test-ui
+    - run: pnpm ci
+    - run: pnpm run build --if-present
+    - run: pnpm run test-ui
