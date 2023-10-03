@@ -32,6 +32,6 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --no-frozen-lockfile
       - name: Run ESLint
-        run: eslint . --ext .js,.jsx,.ts,.tsx
+        run: pnpm eslint . --ext .js,.jsx,.ts,.tsx
       - name: "Cypress Run"
         uses: cypress-io/github-action@v6
