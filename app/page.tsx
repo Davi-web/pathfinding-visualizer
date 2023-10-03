@@ -66,12 +66,6 @@ export default function Home() {
   } = useBoard();
   const tutorialModal = useTutorialModal();
 
-
-
-
-
-
-
   const [algorithm, setAlgorithm] = useState("astar");
   const [disabled, setDisabled] = useState(false);
   const [path, setPath] = useState([]); // the path that we will animate
