@@ -22,7 +22,6 @@ specifiers:
   eslint-config-next: 13.4.12
   lucide-react: ^0.263.1
   next: 13.4.12
-  pnpm: ^8.8.0
   postcss: 8.4.27
   react: 18.2.0
   react-dom: 18.2.0
@@ -56,7 +55,6 @@ dependencies:
   eslint-config-next: 13.4.12_ko3fmmbeyij36muomfgt2u76xu
   lucide-react: 0.263.1_react@18.2.0
   next: 13.4.12_biqbaboplfbrettd7655fr4n2y
-  pnpm: 8.8.0
   postcss: 8.4.27
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -3543,12 +3541,6 @@ packages:
   /pirates/4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
-    dev: false
-
-  /pnpm/8.8.0:
-    resolution: {integrity: sha512-eY5rMiZpzmPI2oVr1irR97bzb036oKwCWvK91wDQndXcqUPlytPtrF0bO668Syw/uA+7hTf5NnM8Mr4ux4BRRA==}
-    engines: {node: '>=16.14'}
-    hasBin: true
     dev: false
 
   /postcss-import/15.1.0_postcss@8.4.27:

@@ -1,12 +1,33 @@
-name: End-to-end tests
-on: push
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Testing UI
+
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
 jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
+  install:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      # Install npm dependencies, cache them correctly
-      # and run all Cypress tests
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
+    - uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    - name: Use Node.js 
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'pnpm'
+    - name: Installing dependencies
+      run: pnpm install 
+    - name: Running tests
+      run: pnpm run test-ui
