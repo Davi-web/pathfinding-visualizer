@@ -8,8 +8,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install pnpm
-        run: npm i -g pnpm
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
