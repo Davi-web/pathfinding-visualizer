@@ -16,7 +16,9 @@ permissions:
 jobs:
   install:
     runs-on: ubuntu-latest
-    strategy: [14, 16, 18]
+    strategy: 
+      matrix:
+        node-version: [14, 16, 18]
 
     steps:
       - uses: actions/checkout@v3
