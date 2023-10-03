@@ -1,6 +1,6 @@
-name: Cypress Tests
+name: UI Tests
 
-on: 
+on:
   push:
       branches: [ "main" ]
     pull_request:
