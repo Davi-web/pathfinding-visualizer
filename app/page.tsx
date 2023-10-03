@@ -47,8 +47,6 @@ import useTutorialModal from "@/hooks/useTutorialModal";
 import { algorithms } from "@/lib/algorithms";
 
 export default function Home() {
-  const [algorithm, setAlgorithm] = useState("astar");
-  const [disabled, setDisabled] = useState(false);
   const {
     board,
     start,
@@ -66,8 +64,17 @@ export default function Home() {
     onClickState,
     setOnClickState,
   } = useBoard();
-  const [path, setPath] = useState([]); // the path that we will animate
   const tutorialModal = useTutorialModal();
+
+
+
+
+
+
+
+  const [algorithm, setAlgorithm] = useState("astar");
+  const [disabled, setDisabled] = useState(false);
+  const [path, setPath] = useState([]); // the path that we will animate
 
   const handleState = (state: OnClickState) => {
     if (state === onClickState) {
