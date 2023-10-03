@@ -45,5 +45,8 @@
     "typewriter-effect": "^2.21.0",
     "zod": "^3.22.2",
     "zustand": "^4.4.1"
+  },
+  "devDependencies": {
+    "cypress": "^13.3.0"
   }
 }
