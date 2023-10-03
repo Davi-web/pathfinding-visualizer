@@ -91,14 +91,9 @@ const useBoard = () => {
       return newBoard;
     });
   };
-  const handleMouseDown = () => {
-    setIsDrawing(true);
-  };
+  const handleMouseDown = () => setIsDrawing(true)
 
-  const handleMouseUp = () => {
-    console.log('mouse up');
-    setIsDrawing(false);
-  };
+  const handleMouseUp = () => setIsDrawing(false)
 
   const handleMouseMove = (e: React.MouseEvent, row: number, col: number) => {
     const node = document.getElementById('node-' + row + '-' + col);
