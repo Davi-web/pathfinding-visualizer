@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import useTutorialModal from "@/hooks/useTutorialModal";
-import { useEffect, useState } from "react";
+import useTutorialModal from '@/hooks/useTutorialModal';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,13 +9,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "./ui/badge";
+} from '@/components/ui/dialog';
+import { Badge } from './ui/badge';
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { STEPS } from "@/lib/enums";
-import { algorithms } from "@/lib/algorithms";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { STEPS } from '@/lib/enums';
+import { algorithms } from '@/lib/algorithms';
 
 const TutorialModal = () => {
   const tutorialModal = useTutorialModal();
@@ -88,8 +88,8 @@ const TutorialModal = () => {
           {algorithms.map((algorithm) => (
             <li key={algorithm.value} className="text-left text-xs py-1">
               <span className="font-bold text-blue-500">
-                {algorithm.label}:{" "}
-              </span>{" "}
+                {algorithm.label}:{' '}
+              </span>{' '}
               {algorithm.description}
             </li>
           ))}
@@ -105,10 +105,11 @@ const TutorialModal = () => {
     );
     body = (
       <div>
-        <video controls width="640" height="360">
-          <source src="/pathfinder.mov" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <iframe
+          width="640"
+          height="360"
+          src="https://www.youtube.com/watch?v=xZg_Ob6wzjk"
+        />
       </div>
     );
   }
@@ -177,7 +178,7 @@ const TutorialModal = () => {
                 Back
               </Button>
               <Button variant="outline" className="flex-grow" onClick={onNext}>
-                {step === STEPS.TECH_STACK ? "Finish" : "Next"}
+                {step === STEPS.TECH_STACK ? 'Finish' : 'Next'}
               </Button>
             </div>
           </div>
