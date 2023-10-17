@@ -7,7 +7,8 @@ def dfs(board: List[List[int]], start: List[int]):
     stack = []
     stack.append((start[0], start[1]))
     visited = set((start[0], start[1]))
-    neighbors = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    # (down, right, up, left)
+    neighbors = [(1, 0), (0, 1),(-1, 0), (0, -1)]
 
     path = []
 
@@ -33,7 +34,8 @@ def bfs(board: List[List[int]], start: List[int]):
     queue = deque()
     queue.append((start[0], start[1]))
     visited = set((start[0], start[1]))
-    neighbors = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    # (down, right, up, left)
+    neighbors = [(1, 0), (0, 1),(-1, 0), (0, -1)]
     path = []
 
     while len(queue) > 0:
@@ -52,8 +54,8 @@ def bfs(board: List[List[int]], start: List[int]):
 
 
 def dijkstra(board: List[List[int]], start: List[int], end: List[int]):
-    # Define the directions (up, down, left, right)
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    # (down, right, up, left)
+    directions = [(1, 0), (0, 1),(-1, 0), (0, -1)]
 
     m = len(board)
     n = len(board[0])
@@ -105,8 +107,8 @@ def manhattan_distance(a, b):
 
 
 def astar(board: List[List[int]], start: List[int], end: List[int]):
-    # Define the directions (up, down, left, right)
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    # (down, right, up, left)
+    directions = [(1, 0), (0, 1),(-1, 0), (0, -1)]
 
     m = len(board)
     n = len(board[0])
