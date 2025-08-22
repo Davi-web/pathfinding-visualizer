@@ -260,7 +260,7 @@ export default function Home() {
   }, [path]);
 
   useEffect(() => {
-    generateRandomBoard(size[0], size[1])
+    generateRandomBoard(size[0], size[1]);
     tutorialModal.onOpen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
