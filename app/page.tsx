@@ -66,7 +66,7 @@ export default function Home() {
   } = useBoard();
   const tutorialModal = useTutorialModal();
 
-  const [algorithm, setAlgorithm] = useState("astar");
+  const [algorithm, setAlgorithm] = useState("bfs");
   const [disabled, setDisabled] = useState(false);
   const [path, setPath] = useState([]); // the path that we will animate
 
@@ -161,7 +161,7 @@ export default function Home() {
 
         const prevNode = path[i - 1];
         let direction = [0, 0];
-        nodeElement?.classList.add("animate-pulse");
+        // nodeElement?.classList.add("animate-pulse");
         nodeElement?.classList.add(stack[1]);
         if (i === path.length - 2) {
           setDisabled(false);
@@ -187,72 +187,72 @@ export default function Home() {
             }
           }
 
-          if (direction[0] === 1 && direction[1] === 0) {
-            // move down
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle ease-in-out transition rotate-180 text-yellow-200 "
-              />,
-            );
-          } else if (direction[0] === -1 && direction[1] === 0) {
-            //move up
+          // if (direction[0] === 1 && direction[1] === 0) {
+          //   // move down
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform flex justify-center align-middle ease-in-out transition rotate-180 text-yellow-200 "
+          //     />,
+          //   );
+          // } else if (direction[0] === -1 && direction[1] === 0) {
+          //   //move up
 
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle rotate-0  text-yellow-200"
-              />,
-            );
-          } else if (direction[0] === 0 && direction[1] === 1) {
-            // move right
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle rotate-90 text-yellow-200"
-              />,
-            );
-          } else if (direction[0] === 0 && direction[1] === -1) {
-            // move left
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform -rotate-90 text-yellow-200"
-              />,
-            );
-          } else if (direction[0] === 1 && direction[1] === 1) {
-            //move down right
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle rotate-[135deg] text-yellow-200"
-              />,
-            );
-          } else if (direction[0] === 1 && direction[1] === -1) {
-            //move down left
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle -rotate-[135deg] text-yellow-200"
-              />,
-            );
-          } else if (direction[0] === -1 && direction[1] === 1) {
-            // move up right
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle rotate-45 text-yellow-200"
-              />,
-            );
-          } else if (direction[0] === -1 && direction[1] === -1) {
-            // move up left
-            createRoot(nodeElement).render(
-              <MoveUp
-                size={15}
-                className="transform flex justify-center align-middle -rotate-45 text-yellow-200"
-              />,
-            );
-          }
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform flex justify-center align-middle rotate-0  text-yellow-200"
+          //     />,
+          //   );
+          // } else if (direction[0] === 0 && direction[1] === 1) {
+          //   // move right
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform flex justify-center align-middle rotate-90 text-yellow-200"
+          //     />,
+          //   );
+          // } else if (direction[0] === 0 && direction[1] === -1) {
+          //   // move left
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform -rotate-90 text-yellow-200"
+          //     />,
+          //   );
+          // } else if (direction[0] === 1 && direction[1] === 1) {
+          //   //move down right
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform flex justify-center align-middle rotate-[135deg] text-yellow-200"
+          //     />,
+          //   );
+          // } else if (direction[0] === 1 && direction[1] === -1) {
+          //   //move down left
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform flex justify-center align-middle -rotate-[135deg] text-yellow-200"
+          //     />,
+          //   );
+          // } else if (direction[0] === -1 && direction[1] === 1) {
+          //   // move up right
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform flex justify-center align-middle rotate-45 text-yellow-200"
+          //     />,
+          //   );
+          // } else if (direction[0] === -1 && direction[1] === -1) {
+          //   // move up left
+          //   createRoot(nodeElement).render(
+          //     <MoveUp
+          //       size={15}
+          //       className="transform flex justify-center align-middle -rotate-45 text-yellow-200"
+          //     />,
+          //   );
+          // }
         }
       }, 20 * i);
     }
@@ -260,6 +260,7 @@ export default function Home() {
   }, [path]);
 
   useEffect(() => {
+    generateRandomBoard(size[0], size[1])
     tutorialModal.onOpen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

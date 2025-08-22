@@ -55,5 +55,5 @@ def algorithms(req: AlgorithmModel):
         path = dfs(board, start)
     return {
         'path': path,
-        'valid': len(path) > 0
+        'valid': len(path) > 0 and path[-1] == end
     }
