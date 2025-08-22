@@ -41,7 +41,7 @@ const TutorialModal = () => {
     <p className="text-left">
       This is a pathfinding visualizer that allows you to find the path between
       the start and end node. Add walls or generate a random board to visualize
-      the path
+      the path.
     </p>
   );
   if (step === STEPS.DESCRIPTION) {
