@@ -54,8 +54,9 @@ const TutorialModal = () => {
       <>
         <ul className="list-disc list-inside">
           <li className="text-left py-1">
-            Within this visualizer, users can seamlessly navigate the grid going
-            up, down, left, and right.
+            Within this visualizer, users can seamlessly navigate the grid,
+            restricted to movements in the cardinal directions of up, down,
+            left, and right.
           </li>
           <li className="text-left py-1">
             It empowers individuals to engage with diverse pathfinding
