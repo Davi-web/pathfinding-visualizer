@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { OnClickState } from "@/lib/enums";
 
 const useBoard = () => {
-  const [size, setSize] = useState([22, 22]);
+  const [size, setSize] = useState([25, 25]);
   const [start, setStart] = useState([1, 1]);
   const [end, setEnd] = useState([size[0] - 2, size[1] - 2]);
   const [isDrawing, setIsDrawing] = useState(false);
