@@ -186,8 +186,6 @@ export default function Home() {
               }
             }
           }
-
-         
         }
       }, 20 * i);
     }
