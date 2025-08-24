@@ -213,21 +213,21 @@ export default function Home() {
               />
               <div className="flex justify-center">
                 <Info
-                  size={20}
+                  size={30}
                   onClick={() => tutorialModal.onOpen()}
                   className="hover:cursor-pointer"
                 />
                 <Link href={"/api/docs"} target="_blank">
-                  <Database size={20} />
+                  <Database size={30} />
                 </Link>
                 <Link href={"/api/redoc"} target="_blank">
-                  <FileJson size={20} />
+                  <FileJson size={30} />
                 </Link>
                 <Link
                   target="_blank"
                   href={"https://github.com/Davi-web/pathfinding-visualizer"}
                 >
-                  <Github size={20} />
+                  <Github size={30} />
                 </Link>
               </div>
             </CardTitle>
